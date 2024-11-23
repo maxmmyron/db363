@@ -12,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
 
 @Entity
@@ -21,23 +22,25 @@ public class Ticket {
 	private Long id;
 	
 	@ManyToOne
-	@JoinColumn(name="passenger_id")
-	@Column(nullable = false)
+	@JoinColumn(name = "passenger_id")
 	private Passenger passenger;
 	
 	@ManyToOne
-	@JoinColumn(name="train_id")
-	@Column(nullable = false)
+	@JoinColumn(name = "train_id")
 	private Train train;
 	
 	@ManyToOne
-	@JoinColumn(name="source_id")
-	@Column(nullable = false)
-	private Station source;
+	@JoinColumns({
+		@JoinColumn(name="origin_name", referencedColumnName = "name", columnDefinition = "VARCHAR(64)"),
+		@JoinColumn(name="origin_route", referencedColumnName = "trainRoute", columnDefinition = "VARCHAR(48)"),
+	})
+	private Station origin;
 	
 	@ManyToOne
-	@JoinColumn(name="dest_id")
-	@Column(nullable = false)
+	@JoinColumns({
+		@JoinColumn(name="dest_name", referencedColumnName = "name", columnDefinition = "VARCHAR(64)"),
+		@JoinColumn(name="dest_route", referencedColumnName = "trainRoute", columnDefinition = "VARCHAR(48)"),
+	})
 	private Station dest;
 	
 	@Column(nullable = false)

@@ -123,8 +123,8 @@ INSERT INTO Link (origin, terminus, duration, distance) VALUES
 ("Residential Area", "School District", 11, 11),
 ("School District", "Park & Ride", 10, 10);
 
-INSERT INTO Train (trainRoute, station, status) VALUES
-  ();
+-- INSERT INTO Train (trainRoute, station, trainStatus) VALUES
+--   ("Line 1", "City Hall", "BOARDING");
 
-INSERT INTO Ticket (passenger, train, source, dest, departure, direction) VALUES
-  ()
+-- INSERT INTO Ticket (passenger, train, source, dest, departure, direction) VALUES
+--   (1, 1, )

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mmyron.db363.entitiy.Station;
+import com.mmyron.db363.entitiy.StationPK;
+import com.mmyron.db363.repo.LinkRepo;
 import com.mmyron.db363.repo.StationRepo;
 
 @Controller
@@ -20,7 +22,10 @@ public class StationController {
 	@Autowired
 	private StationRepo stationRepo;
 	
-	@PostMapping(path="/add")
+	@Autowired
+	private LinkRepo linkRepo;
+	
+	@PostMapping(path="/new")
 	public @ResponseBody String addStation() {
 		Station s = new Station();
 		stationRepo.save(s);
@@ -28,14 +33,19 @@ public class StationController {
 		return "Saved";
 	}
 	
-	@GetMapping(path="/all")
+	@GetMapping(path="/get")
 	public @ResponseBody Iterable<Station> getStation() {
 		return stationRepo.findAll();
 	}
 	
-	@GetMapping(path="/get/{id}")
-	public @ResponseBody String getStation(@PathVariable Long id) {
-		Optional<Station> s = stationRepo.findById(id);
+//	@GetMapping(path="/get/{route}")
+//	public @ResponseBody Iterable<Station> getStationsByRoute (@PathVariable String route) { 
+//		return stationRepo.findAllByRoute(route);
+//	}
+	
+	@GetMapping(path="/get/{route}/{name}")
+	public @ResponseBody String getStation(@PathVariable String route, @PathVariable String name) {
+		Optional<Station> s = stationRepo.findById(new StationPK(name, route));
 		if(s.isEmpty()) return "No station found";
 		return s.get().toString();
 	}

@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
 
 @Entity
@@ -13,30 +14,30 @@ public class Train {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	@ManyToOne
-	@JoinColumn(name="trainroute_id")
-	@Column(nullable = false)
+
+	@Column(length = 48)
 	private String trainRoute;
-	
+
 	@ManyToOne
-	@JoinColumn(name="station_id")
-	@Column(nullable = false)
+	@JoinColumns({
+		@JoinColumn(name="station_name", referencedColumnName = "name", columnDefinition = "VARCHAR(64)"),
+		@JoinColumn(name="station_route", referencedColumnName = "trainRoute", columnDefinition = "VARCHAR(48)"),
+	})
 	private Station station;
 
 	@Column(nullable = false)
-	private String status;
-	
+	private String trainStatus;
+
 	public Train() {}
-	
-	public Train(String route, Station station, String status) {
+
+	public Train(String route, Station station, String trainStatus) {
 		this.trainRoute = route;
 		this.station = station;
-		this.status = status;
+		this.trainStatus = trainStatus;
 	}
-	
+
 	// getters & setters
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -62,13 +63,13 @@ public class Train {
 	}
 
 	public String getStatus() {
-		return status;
+		return trainStatus;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setStatus(String trainStatus) {
+		this.trainStatus = trainStatus;
 	}
-	
+
 	// overrides
 
 	@Override

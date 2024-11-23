@@ -17,19 +17,48 @@ package com.mmyron.db363.entitiy;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
+@Table(uniqueConstraints = {
+	@UniqueConstraint(
+		columnNames = {
+			"origin_name", "origin_route",
+			"dest_name", "dest_route"
+		}
+	)
+})
 public class Link {
 	@EmbeddedId
 	private LinkPK id;
 	
-	@Column(nullable = false)
+	@ManyToOne
+	@MapsId("origin")
+	@JoinColumns({
+		@JoinColumn(name="origin_name", referencedColumnName = "name", columnDefinition = "VARCHAR(64)"),
+		@JoinColumn(name="origin_route", referencedColumnName = "trainRoute", columnDefinition = "VARCHAR(48)"),
+	})
+	private Station originStation;
+	
+	@ManyToOne
+	@MapsId("dest")
+	@JoinColumns({
+		@JoinColumn(name="dest_name", referencedColumnName = "name", columnDefinition = "VARCHAR(64)"),
+		@JoinColumn(name="dest_route", referencedColumnName = "trainRoute", columnDefinition = "VARCHAR(48)"),
+	})
+	private Station destStation;
+	
 	private Integer duration;
-	@Column(nullable = false)
 	private Integer distance;
 	
-	public Link(Station origin, Station terminus, Integer duration, Integer distance) {
-		id = new LinkPK(origin, terminus);
+	public Link(StationPK origin, StationPK dest, Integer duration, Integer distance) {
+		id = new LinkPK(origin, dest);
 		this.duration = duration;
 		this.distance = distance;
 	}
