@@ -1,4 +1,4 @@
-package com.mmyron.db363;
+package com.mmyron.db363.controller;
 
 import java.util.Optional;
 
@@ -10,14 +10,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.mmyron.db363.entitiy.Train;
+import com.mmyron.db363.repo.TrainRepo;
+
 @Controller
-@RequestMapping(path="/api")
-public class MainController {
+@RequestMapping(path="/api/trains")
+public class TrainController {
 	// get auto-generated bean
 	@Autowired
 	private TrainRepo trainRepo;
 	
-	@PostMapping(path="/trains/add")
+	@PostMapping(path="/add")
 	public @ResponseBody String addTrain() {
 		Train t = new Train();
 		trainRepo.save(t);
@@ -25,13 +28,13 @@ public class MainController {
 		return "Saved";
 	}
 	
-	@GetMapping(path="/trains/all")
+	@GetMapping(path="/all")
 	public @ResponseBody Iterable<Train> getTrains() {
 		return trainRepo.findAll();
 	}
 	
-	@GetMapping(path="/trains/get/{id}")
-	public @ResponseBody String getTrain(@PathVariable Integer id) {
+	@GetMapping(path="/get/{id}")
+	public @ResponseBody String getTrain(@PathVariable Long id) {
 		Optional<Train> t = trainRepo.findById(id);
 		if(t.isEmpty()) return "No train found";
 		return t.get().toString();
