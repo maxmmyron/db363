@@ -10,7 +10,7 @@ import com.mmyron.db363.entitiy.StationPK;
 public interface StationRepo extends CrudRepository<Station, StationPK> {
 	
 //	@Query("""
-//		SELECT name, trainRoute, loadingTime FROM Station
+//		SELECT (name, trainRoute, loadingTime) FROM Station
 //		WHERE Station.trainRoute = trainRoute
 //			""")
 //	Iterable<Station> findAllByRoute(@Param("trainRoute") String route);

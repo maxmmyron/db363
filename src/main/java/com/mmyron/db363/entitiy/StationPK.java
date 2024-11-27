@@ -15,12 +15,9 @@ public class StationPK implements Serializable {
 	@Column(length = 48)
 	private String trainRoute;
 	
-	public StationPK() {
-		super();
-	}
+	public StationPK() {}
 
 	public StationPK(String name, String trainRoute) {
-		super();
 		this.name = name;
 		this.trainRoute = trainRoute;
 	}

@@ -22,6 +22,8 @@ public class Station {
 	private Set<Link> outboundLinks = new HashSet<>();
 	
 	private Integer loadingTime;
+	
+	public Station () {}
 
 	// getters & setters
 

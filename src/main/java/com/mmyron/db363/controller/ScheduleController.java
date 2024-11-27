@@ -24,7 +24,7 @@ import com.mmyron.db363.util.TrainDirection;
 
 @Controller
 @RequestMapping(path="/api/passengers")
-public class PassengerController {
+public class ScheduleController {
 	// get auto-generated bean
 	@Autowired
 	private PassengerRepo passengerRepo;

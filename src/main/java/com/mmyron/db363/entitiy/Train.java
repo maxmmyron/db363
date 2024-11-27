@@ -1,5 +1,15 @@
 package com.mmyron.db363.entitiy;
 
+import java.sql.Time;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.hibernate.annotations.Check;
+import org.hibernate.annotations.Checks;
+
+import com.mmyron.db363.util.TrainDirection;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,6 +18,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class Train {
@@ -20,13 +32,21 @@ public class Train {
 
 	@ManyToOne
 	@JoinColumns({
-		@JoinColumn(name="station_name", referencedColumnName = "name", columnDefinition = "VARCHAR(64)"),
-		@JoinColumn(name="station_route", referencedColumnName = "trainRoute", columnDefinition = "VARCHAR(48)"),
+		@JoinColumn(name="station_name", referencedColumnName = "name", nullable = true),
+		@JoinColumn(name="station_route", referencedColumnName = "trainRoute", nullable = true),
 	})
 	private Station station;
+	
+	private Time departure; 
 
 	@Column(nullable = false)
 	private String trainStatus;
+	
+	@ManyToOne
+	private Schedule schedule = null;
+	
+	@OneToMany(mappedBy = "train")
+	private Set<Ticket> tickets = new HashSet<>();
 
 	public Train() {}
 
@@ -34,6 +54,13 @@ public class Train {
 		this.trainRoute = route;
 		this.station = station;
 		this.trainStatus = trainStatus;
+	}
+	
+	public Train(String route, Station station, String trainStatus, Schedule schedule) {
+		this.trainRoute = route;
+		this.station = station;
+		this.trainStatus = trainStatus;
+		this.schedule = schedule;
 	}
 
 	// getters & setters
@@ -70,6 +97,14 @@ public class Train {
 		this.trainStatus = trainStatus;
 	}
 
+	public Schedule getSchedule() {
+		return schedule;
+	}
+
+	public void setSchedule(Schedule schedule) {
+		this.schedule = schedule;
+	}
+	
 	// overrides
 
 	@Override
