@@ -25,71 +25,87 @@ After loading the SQL db successfully, the spring application runs on port 5133,
 
 ### Table: Train
 
-> An individual train that may be given a schedule and route.
+An individual train that may be given a schedule. Has the following relationships:
 
-| Name    | Type       | Description                                  |
-| ------- | ---------- | -------------------------------------------- |
-| ID      |            |                                              |
-| Route   | Route.id   | The route the train is currently assigned to |
-| Station | Station.id | The station the train was last at.           |
-| Status  | String     | in route, arriving, boarding, departing, etc |
+- nullable 1:1 w/ Station (One train _may_ be at one station; One station _may_ have one train at it.)
+- M:1 w/ Schedule (A train is assigned one schedule; one schedule may have many trains assigned to it.)
+
+| Name            | Type        | PK  | Description                                                                       |
+| --------------- | ----------- | --- | --------------------------------------------------------------------------------- |
+| id              |             | PRI |                                                                                   |
+| schedule        | Schedule.id | FRN | The current schedule assigned to this train                                       |
+| sched_departure | Time        |     | Departure time from initial station                                               |
+| station         | Station.id  | FRN | The station the train is at. (May be null)                                        |
+| arrival         | Time        |     | The time the train arrived at the station. NULL if the train is not at a station. |
+| departure       | Time        |     | The time the train departed the station. NULL if the train is at a station.       |
+| status          | String      |     | in route, arriving, boarding, departing, etc.                                     |
 
 ### Table: Station
 
-> A station that can house one or more trains
+A station that can house a train.
 
-| Name         | Type     | Description                                    |
-| ------------ | -------- | ---------------------------------------------- |
-| ID           |          |                                                |
-| Name         | String   | Human-readable name of station                 |
-| Route        | Route.ID | The route assigned to this station (see below) |
-| Inbound      | Link.ID  | The link to the previous station               |
-| Outbound     | Link.ID  | The link to the following station              |
-| Loading time | Number   | How long the train is at the station for       |
+| Name         | Type   | PK  | Description                                    |
+| ------------ | ------ | --- | ---------------------------------------------- |
+| name         | String | PRI | Human-readable name of station                 |
+| route        | String | PRI | The route assigned to this station (see below) |
+| loading_time | Number |     | How long the train is at the station for       |
 
 _Note:_ Route is described in this table so we can associate a station with multiple routes; e.g. Park Street -> Green and Red line
 
 ### Link
 
-> A connection between two stations via a train along a route. Used to describe time/distance for individual route components.
+A connection between two stations via a train along a route. Used to describe time/distance for individual route components.
 
-| Name     | Type       | Description                                      |
-| -------- | ---------- | ------------------------------------------------ |
-| ID       |            |                                                  |
-| Origin   | Station.id | The station this link starts at                  |
-| Terminus | Station.id | The station this link ends at                    |
-| Duration | Number     | The time it takes to go between the two stations |
-| Distance | number     | The distance between the two stations            |
+_NOTE: Primary key is composed of two composite foreign keys (one for origin station, one for destination station)._
 
-### Table: Route
+| Name         | Type         | PK  | Description                                      |
+| ------------ | ------------ | --- | ------------------------------------------------ |
+| origin_name  | VARACHAR(64) | FRN |                                                  |
+| origin_route | VARCHAR(48)  | FRN |                                                  |
+| Terminus     | VARACHAR(64) | FRN |                                                  |
+| dest_route   | VARACHAR(48) | FRN |                                                  |
+| Duration     | Number       |     | The time it takes to go between the two stations |
+| Distance     | NUmber       |     | The distance between the two stations            |
 
-> A route that may be assigned to a train. May be described as a series of stations.
+### Table: Schedule
 
-| Name     | Type       | Description                          |
-| -------- | ---------- | ------------------------------------ |
-| ID       |            |                                      |
-| Source   | Station.id | The genesis station along the route  |
-| Dest     | Station.id | The terminal station along the route |
-| Duration | Number     | The total duration of the route      |
-| Distance | Number     | The total length of the route, in km |
+A schedule that specifies a route a train may run along.
+
+| Name         | Type           | PK  | Description        |
+| ------------ | -------------- | --- | ------------------ |
+| id           |                | PRI |                    |
+| origin_name  | VARACHAR(64)   | FRN |                    |
+| origin_route | VARCHAR(48)    | FRN |                    |
+| dest_name    | VARACHAR(64)   | FRN |                    |
+| dest_route   | VARACHAR(48)   | FRN |                    |
+| dir          | TrainDirection |     | direction of train |
 
 ### Table: Ticket
 
-> A ticket is a single trip that a passenger may take between two stations. It is valid for a single trip on one route.
+A ticket specifies a passenger's single trip along a scheduled route. Has the following relationships:
 
-| Name           | Type         | Description                               |
-| -------------- | ------------ | ----------------------------------------- |
-| ID             |              |                                           |
-| Passenger      | Passenger.id | The passenger this ticket belongs to      |
-| Train          | Train.id     | The train to board for this ticket        |
-| Source         | Station.id   |                                           |
-| Dest           | Station.id   |                                           |
-| Departure time | Time         | When the train departs the source station |
-| Direction      | String       | Inbound, Outbound                         |
+- M:1 w/ Passenger (Many tickets can be allocated to a single passenger; one passenger may have many tickets)
+- M:1 w/ Train (Many tickets may specify a single train; one train may have many tickets)
+
+_NOTE: More complex trips (like those with interchanges) require more than one ticket._
+
+| Name         | Type         | PK  | Description                               |
+| ------------ | ------------ | --- | ----------------------------------------- |
+| passenger    | Passenger.id | PRI | The passenger this ticket belongs to      |
+| train        | Train.id     | PRI | The train to board for this ticket        |
+| origin_name  | VARCHAR(64)  | FRN |                                           |
+| origin_route | VARCHAR(48)  | FRN |                                           |
+| dest_name    | VARCHAR(64)  | FRN |                                           |
+| dest_route   | VARCHAR(48)  | FRN |                                           |
+| departure    | Time         |     | When the train departs the origin station |
 
 ### Table: Passenger
 
-> A passenger with a ticket for a route.
+A passenger. May have a ticket for a route.
+
+Cascades:
+
+- On Deletion: Any associated ticket should be deleted.
 
 | Name  | Type   | Description |
 | ----- | ------ | ----------- |
