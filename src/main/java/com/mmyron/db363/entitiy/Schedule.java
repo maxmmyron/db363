@@ -27,14 +27,13 @@ import jakarta.persistence.UniqueConstraint;
 
 @Entity
 @Table(uniqueConstraints = {
-		@UniqueConstraint(
-			columnNames = {
-				"origin_name", "origin_route",
-				"dest_name", "dest_route",
-				"departure"
-			}
-		)
-	})
+	@UniqueConstraint(
+		columnNames = {
+			"origin_name", "origin_route",
+			"dest_name", "dest_route",
+		}
+	)
+})
 @Checks({
 	// station name non-equivalence constraint
 	@Check(constraints = "origin_name <> dest_name"),
@@ -49,34 +48,30 @@ public class Schedule {
 	@ManyToOne
 	@JoinColumns({
 		@JoinColumn(name="origin_name", referencedColumnName = "name", columnDefinition = "VARCHAR(64)", nullable = false),
-		@JoinColumn(name="origin_route", referencedColumnName = "trainRoute", columnDefinition = "VARCHAR(48)", nullable = false),
+		@JoinColumn(name="origin_route", referencedColumnName = "train_route", columnDefinition = "VARCHAR(48)", nullable = false),
 	})
 	private Station originStation;
 
 	@ManyToOne
 	@JoinColumns({
 		@JoinColumn(name="dest_name", referencedColumnName = "name", columnDefinition = "VARCHAR(64)", nullable = false),
-		@JoinColumn(name="dest_route", referencedColumnName = "trainRoute", columnDefinition = "VARCHAR(48)", nullable = false),
+		@JoinColumn(name="dest_route", referencedColumnName = "train_route", columnDefinition = "VARCHAR(48)", nullable = false),
 	})
 	private Station destStation;
 
 	@Column(nullable = false)
-	private Time departure;
-
-	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	private TrainDirection dir;
+	private TrainDirection direction;
 
 	@OneToMany(mappedBy="schedule")
 	private Set<Train> trains = new HashSet<>();
 
 	public Schedule() {}
 
-	public Schedule(Station origin, Station dest, Time departure, TrainDirection dir) {
+	public Schedule(Station origin, Station dest, TrainDirection dir) {
 		this.originStation = origin;
 		this.destStation = dest;
-		this.departure = departure;
-		this.dir = dir;
+		this.direction = dir;
 	}
 
 	// getters & setters
@@ -104,13 +99,13 @@ public class Schedule {
 	public void setDestStation(Station destStation) {
 		this.destStation = destStation;
 	}
-
-	public Time getDeparture() {
-		return departure;
+	
+	public TrainDirection getDirection() {
+		return direction;
 	}
-
-	public void setDeparture(Time departure) {
-		this.departure = departure;
+	
+	public void setDirection(TrainDirection dir) {
+		this.direction = dir;
 	}
 
 	public Set<Train> getTrains() {

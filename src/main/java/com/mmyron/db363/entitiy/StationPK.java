@@ -12,7 +12,7 @@ import jakarta.persistence.ManyToOne;
 public class StationPK implements Serializable {
 	@Column(length = 64)
 	private String name;
-	@Column(length = 48)
+	@Column(name="train_route", length = 48)
 	private String trainRoute;
 	
 	public StationPK() {}

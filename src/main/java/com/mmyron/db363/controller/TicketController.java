@@ -120,7 +120,11 @@ public class TicketController {
 		Passenger p = passengerRepo.findById(pId).orElse(null);
 		Train t = trainRepo.findById(tId).orElse(null);
 		
-		route = route == null ? t.getTrainRoute() : route;
+		if(t != null && t.getSchedule() == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error updating ticket: Train " + tId + "has no assigned schedule");
+		
+		String trainScheudleRoute = t.getSchedule().getOriginStation().getId().getTrainRoute();
+		
+		route = route == null ? trainScheudleRoute : route;
 		origin = origin == null ? tx.getOrigin().getId().getName() : origin;
 		dest = dest == null ? tx.getDest().getId().getName() : dest;
 		
@@ -147,7 +151,7 @@ public class TicketController {
 		}
 	
 		// special validation case: train route must eq. station routes
-		if(!t.getTrainRoute().equals(route)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error updating ticket: Train on route" + trainRepo.findById(tx.getId().getTrainId()).get().getTrainRoute() + " cannot be assigned to ticket with route " + route);
+		if(!trainScheudleRoute.equals(route)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error updating ticket: Train on route" + trainScheudleRoute + " cannot be assigned to ticket with route " + route);
 		
 		tx.setId(new TicketPK(pId, tId));
 		tx.setOrigin(o);

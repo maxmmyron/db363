@@ -1,4 +1,4 @@
-INSERT INTO Passenger (firstName, lastName) VALUES
+INSERT INTO Passenger (first_name, last_name) VALUES
   ("John", "Adams"),
   ("Yusra", "Marshall"),
   ("Marnie", "Wilson"),
@@ -11,7 +11,7 @@ INSERT INTO Passenger (firstName, lastName) VALUES
   ("Declan", "Green"),
   ("Cian", "Vaughn");
 
-INSERT INTO Station (name, trainRoute, loadingTime) VALUES
+INSERT INTO Station (name, train_route, loading_time) VALUES
   ("Waterfront", "Line 1", 4), -- line 1
   ("City Hall", "Line 1", 4),
   ("Market Cross", "Line 1", 4),  -- interchange duplicate

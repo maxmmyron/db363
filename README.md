@@ -35,7 +35,8 @@ An individual train that may be given a schedule. Has the following relationship
 | id              |             | PRI |                                                                                   |
 | schedule        | Schedule.id | FRN | The current schedule assigned to this train                                       |
 | sched_departure | Time        |     | Departure time from initial station                                               |
-| station         | Station.id  | FRN | The station the train is at. (May be null)                                        |
+| station_name    | String      | FRN | The station the train is at. (May be null)                                        |
+| station_route   | String      | FRN | The station the train is at. (May be null)                                        |
 | arrival         | Time        |     | The time the train arrived at the station. NULL if the train is not at a station. |
 | departure       | Time        |     | The time the train departed the station. NULL if the train is at a station.       |
 | status          | String      |     | in route, arriving, boarding, departing, etc.                                     |
@@ -62,7 +63,7 @@ _NOTE: Primary key is composed of two composite foreign keys (one for origin sta
 | ------------ | ------------ | --- | ------------------------------------------------ |
 | origin_name  | VARACHAR(64) | FRN |                                                  |
 | origin_route | VARCHAR(48)  | FRN |                                                  |
-| Terminus     | VARACHAR(64) | FRN |                                                  |
+| dest_name    | VARACHAR(64) | FRN |                                                  |
 | dest_route   | VARACHAR(48) | FRN |                                                  |
 | Duration     | Number       |     | The time it takes to go between the two stations |
 | Distance     | NUmber       |     | The distance between the two stations            |

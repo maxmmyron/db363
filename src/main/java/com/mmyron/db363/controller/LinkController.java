@@ -12,34 +12,33 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.mmyron.db363.entitiy.Link;
+import com.mmyron.db363.entitiy.LinkPK;
 import com.mmyron.db363.entitiy.Station;
 import com.mmyron.db363.entitiy.StationPK;
 import com.mmyron.db363.repo.LinkRepo;
 import com.mmyron.db363.repo.StationRepo;
 
 @Controller
-@RequestMapping(path="/api/stations")
-public class StationController {
+@RequestMapping(path="/api/links")
+public class LinkController {
 	// get auto-generated bean
 	@Autowired
-	private StationRepo stationRepo;
+	private LinkRepo linkRepo;
 	
 	// read
 	
 	@GetMapping(path="/")
-	public @ResponseBody Iterable<Station> getStations() {
-		return stationRepo.findAll();
+	public @ResponseBody Iterable<Link> getLinks() {
+		return linkRepo.findAll();
 	}
 	
-//	@GetMapping(path="/{route}")
-//	public @ResponseBody Iterable<Station> getStationsByRoute (@PathVariable String route) { 
-//		return stationRepo.findAllByRoute(route);
-//	}
-	
 	@GetMapping(path="/{route}/{name}")
-	public @ResponseBody Station getStation(@PathVariable String route, @PathVariable String name) {
-		Optional<Station> s = stationRepo.findById(new StationPK(name, route));
-		if(s.isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Station " + name + " does not exist on route " + route);
-		return s.get();
+	public @ResponseBody Link getLink(@PathVariable String route, @PathVariable String origin, @PathVariable String dest) {
+		StationPK o = new StationPK(origin, route);
+		StationPK d = new StationPK(dest, route);
+		Optional<Link> l = linkRepo.findById(new LinkPK(o, d));
+		if(l.isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Link does not exist between" + origin + " and " + dest + " on route " + route);
+		return l.get();
 	}
 }

@@ -27,39 +27,41 @@ public class Train {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(length = 48)
-	private String trainRoute;
-
 	@ManyToOne
 	@JoinColumns({
 		@JoinColumn(name="station_name", referencedColumnName = "name", nullable = true),
-		@JoinColumn(name="station_route", referencedColumnName = "trainRoute", nullable = true),
+		@JoinColumn(name="station_route", referencedColumnName = "train_route", nullable = true),
 	})
 	private Station station;
 	
-	private Time departure; 
-
-	@Column(nullable = false)
-	private String trainStatus;
+	@Column(name="station_departure")
+	private Time stationDep = null;
+	
+	@Column(name="station_arrival")
+	private Time stationArrival = null;
 	
 	@ManyToOne
 	private Schedule schedule = null;
+	
+	@Column(name="sched_departure")
+	private Time schedDep;
+	
+	@Column(name="train_status", nullable = false)
+	private String status;
 	
 	@OneToMany(mappedBy = "train")
 	private Set<Ticket> tickets = new HashSet<>();
 
 	public Train() {}
 
-	public Train(String route, Station station, String trainStatus) {
-		this.trainRoute = route;
+	public Train(Station station, String trainStatus) {
 		this.station = station;
-		this.trainStatus = trainStatus;
+		this.status = trainStatus;
 	}
 	
-	public Train(String route, Station station, String trainStatus, Schedule schedule) {
-		this.trainRoute = route;
+	public Train(Station station, String trainStatus, Schedule schedule) {
 		this.station = station;
-		this.trainStatus = trainStatus;
+		this.status = trainStatus;
 		this.schedule = schedule;
 	}
 
@@ -73,14 +75,6 @@ public class Train {
 		this.id = id;
 	}
 
-	public String getTrainRoute() {
-		return trainRoute;
-	}
-
-	public void setTrainRoute(String trainRoute) {
-		this.trainRoute = trainRoute;
-	}
-
 	public Station getStation() {
 		return station;
 	}
@@ -90,11 +84,11 @@ public class Train {
 	}
 
 	public String getStatus() {
-		return trainStatus;
+		return status;
 	}
 
 	public void setStatus(String trainStatus) {
-		this.trainStatus = trainStatus;
+		this.status = trainStatus;
 	}
 
 	public Schedule getSchedule() {

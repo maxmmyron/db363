@@ -53,7 +53,7 @@ public class TrainController {
 			
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, err);
 		}
-		Train t = sch != null ? new Train(route, s, status, sch) : new Train(route, s, status); 
+		Train t = sch != null ? new Train(s, status, sch) : new Train(s, status); 
 		trainRepo.save(t);
 		
 		return t;
@@ -80,7 +80,7 @@ public class TrainController {
 		Train t = trainRepo.findById(id).orElse(null);
 		if(t == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error updating train: Train " + id + " does not exist."); 
 		
-		route = route == null ? t.getTrainRoute() : route;
+		route = route == null ? t.getStation().getId().getTrainRoute() : route;
 		station = station == null ? t.getStation().getId().getName() : station;
 		Station s = stationRepo.findById(new StationPK(station, route)).orElse(null);
 		
@@ -94,7 +94,6 @@ public class TrainController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, err);
 		}
 		
-		t.setTrainRoute(route);
 		t.setStation(s);
 		t.setStatus(status == null ? t.getStatus() : status);
 		t.setSchedule(sch);

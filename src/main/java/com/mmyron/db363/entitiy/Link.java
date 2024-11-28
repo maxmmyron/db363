@@ -51,7 +51,7 @@ public class Link {
 	@MapsId("origin")
 	@JoinColumns({
 		@JoinColumn(name="origin_name", referencedColumnName = "name", columnDefinition = "VARCHAR(64)", nullable = false),
-		@JoinColumn(name="origin_route", referencedColumnName = "trainRoute", columnDefinition = "VARCHAR(48)", nullable = false),
+		@JoinColumn(name="origin_route", referencedColumnName = "train_route", columnDefinition = "VARCHAR(48)", nullable = false),
 	})
 	private Station originStation;
 
@@ -59,7 +59,7 @@ public class Link {
 	@MapsId("dest")
 	@JoinColumns({
 		@JoinColumn(name="dest_name", referencedColumnName = "name", columnDefinition = "VARCHAR(64)", nullable = false),
-		@JoinColumn(name="dest_route", referencedColumnName = "trainRoute", columnDefinition = "VARCHAR(48)", nullable = false),
+		@JoinColumn(name="dest_route", referencedColumnName = "train_route", columnDefinition = "VARCHAR(48)", nullable = false),
 	})
 	private Station destStation;
 
