@@ -1,20 +1,26 @@
 import type { PageLoad } from "./$types"
 
 export const load: PageLoad = async ({ params, fetch }) => {
-  let res = null
+  let trains = null, passengers = null, schedules = null, tickets = null;
   try {
-    res = await fetch("http://localhost:5133/api/trains/all");
-  } catch (err) {
+    trains = await fetch("http://localhost:5133/api/trains/");
+    passengers = await fetch("http://localhost:5133/api/passengers/");
+    schedules = await fetch("http://localhost:5133/api/schedules/");
+    tickets = await fetch("http://localhost:5133/api/tickets/");
+  } catch (err: any) {
     return {
-      trains: [],
+      trains: null,
+      passengers: null,
+      schedules: null,
+      tickets: null,
       err,
     };
   }
 
-  const trains = await res.json();
-
   return {
-    trains,
-    err: null,
+    trains: await trains.json(),
+    passengers: await passengers.json(),
+    schedules: await schedules.json(),
+    tickets: await tickets.json(),
   };
 }
