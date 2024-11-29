@@ -5,10 +5,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -20,6 +22,7 @@ import com.mmyron.db363.repo.LinkRepo;
 import com.mmyron.db363.repo.StationRepo;
 
 @Controller
+@CrossOrigin(origins = "*")
 @RequestMapping(path="/api/links")
 public class LinkController {
 	// get auto-generated bean
@@ -33,8 +36,8 @@ public class LinkController {
 		return linkRepo.findAll();
 	}
 	
-	@GetMapping(path="/{route}/{name}")
-	public @ResponseBody Link getLink(@PathVariable String route, @PathVariable String origin, @PathVariable String dest) {
+	@GetMapping(path="/{route}")
+	public @ResponseBody Link getLink(@PathVariable String route, @RequestParam String origin, @RequestParam String dest) {
 		StationPK o = new StationPK(origin, route);
 		StationPK d = new StationPK(dest, route);
 		Optional<Link> l = linkRepo.findById(new LinkPK(o, d));
