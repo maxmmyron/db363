@@ -28,10 +28,7 @@ public class Train {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumns({
-		@JoinColumn(name="station_name", referencedColumnName = "name", nullable = true),
-		@JoinColumn(name="station_route", referencedColumnName = "train_route", nullable = true),
-	})
+	@JoinColumn(name="station_name", referencedColumnName = "name", nullable = true)
 	private Station station;
 	
 	@Column(name="station_departure")
@@ -41,9 +38,13 @@ public class Train {
 	private Time stationArrival = null;
 	
 	@ManyToOne
+	@JoinColumns({
+		@JoinColumn(name="schedule_id", referencedColumnName = "id", nullable = true),
+		@JoinColumn(name="schedule_route", referencedColumnName = "origin_route", nullable = true)
+	})
 	private Schedule schedule = null;
 	
-	@Column(name="sched_departure")
+	@Column(name="schedule_departure")
 	private Time schedDep;
 	
 	@Column(name="train_status", nullable = false)

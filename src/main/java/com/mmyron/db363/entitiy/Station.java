@@ -22,7 +22,7 @@ public class Station {
 	@OneToMany(mappedBy="destStation")
 	private Set<Link> outboundLinks = new HashSet<>();
 	
-	@Column(name="loading_time")
+	@Column(name="loading_time", nullable = false)
 	private Integer loadingTime;
 	
 	public Station () {}

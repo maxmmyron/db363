@@ -64,9 +64,11 @@ public class Link {
 	private Station destStation;
 
 	@Check(constraints = "duration > 0")
+	@Column(nullable = false)
 	private Integer duration;
 
 	@Check(constraints = "distance > 0")
+	@Column(nullable = false)
 	private Integer distance;
 
 	public Link() {}

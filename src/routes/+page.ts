@@ -18,9 +18,9 @@ export const load: PageLoad = async ({ params, fetch }) => {
   }
 
   return {
-    trains: await trains.json(),
-    passengers: await passengers.json(),
-    schedules: await schedules.json(),
-    tickets: await tickets.json(),
+    trains: await trains.json() as App.Train[],
+    passengers: await passengers.json() as App.Passenger[],
+    schedules: await schedules.json() as App.Schedule[],
+    tickets: await tickets.json() as App.Ticket[],
   };
 }
