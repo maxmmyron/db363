@@ -1,4 +1,5 @@
 <script lang="ts">
+  import CrudPanel from "$lib/CRUDPanel.svelte";
   import type { PageData } from "./$types";
 
   let { data }: { data: PageData } = $props();
@@ -38,3 +39,12 @@
     <pre style="font-family: monospace;">{JSON.stringify(tx)}</pre>
   {/each}
 {/if}
+
+<CrudPanel
+  prim={{
+    id: new Map<string, string>([["id", ""]]),
+    first_name: "",
+    last_name: "",
+  }}
+  endpoint="http://localhost:5133/api/passengers"
+/>
