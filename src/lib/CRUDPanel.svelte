@@ -4,8 +4,11 @@
 >
   import { formatAPIObject } from "$lib";
 
-  export let prim: T;
-  export let endpoint: string;
+  let {
+    requestSent,
+    prim,
+    endpoint,
+  }: { requestSent: () => void; prim: T; endpoint: string } = $props();
 
   if (endpoint.at(endpoint.length - 1) == "/") {
     throw new Error("endpoint param cannot end in '/'.");
@@ -84,7 +87,7 @@
   <section>
     <h1>Create</h1>
     <form
-      on:submit={(e) => {
+      onsubmit={(e) => {
         e.preventDefault();
         let formData = new FormData(e.currentTarget);
 
@@ -94,7 +97,7 @@
           o[k.toString()] = v.toString();
         });
 
-        create(o as Exclude<T, "id">);
+        create(o as Exclude<T, "id">).then(() => requestSent());
       }}
     >
       {@render nonIdInputs(prim)}
@@ -104,14 +107,14 @@
   <section>
     <h1>Read</h1>
     <form
-      on:submit={(e) => {
+      onsubmit={(e) => {
         e.preventDefault();
         let formData = new FormData(e.currentTarget);
 
         let id = new Map<String, string>();
         formData.forEach((v, k) => id.set(k.toString(), v.toString()));
 
-        read(id as T["id"]);
+        read(id as T["id"]).then(() => requestSent());
       }}
     >
       {@render idInputs(prim)}
@@ -121,7 +124,7 @@
   <section>
     <h1>Update</h1>
     <form
-      on:submit={(e) => {
+      onsubmit={(e) => {
         e.preventDefault();
         let formData = new FormData(e.currentTarget);
 
@@ -131,7 +134,7 @@
           o[k.toString()] = v.toString();
         });
 
-        update(o as T);
+        update(o as T).then(() => requestSent());
       }}
     >
       {@render idInputs(prim)}
@@ -143,13 +146,13 @@
   <section>
     <h1>Delete</h1>
     <form
-      on:submit={(e) => {
+      onsubmit={(e) => {
         e.preventDefault();
         let formData = new FormData(e.currentTarget);
         let id = new Map<String, string>();
         formData.forEach((v, k) => id.set(k.toString(), v.toString()));
 
-        del(id as T["id"]);
+        del(id as T["id"]).then(() => requestSent());
       }}
     >
       {@render idInputs(prim)}
