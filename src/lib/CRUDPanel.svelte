@@ -67,26 +67,28 @@
 </script>
 
 {#snippet idInputs(o: T)}
-  {#each Object.entries(prim["id"]) as [k, v]}
+  {#each o["id"].entries() as [k, v]}
     <label for={k}>{k}</label>
-    <input name={k} type="text" />
+    <input name={k} type="text" class="border" />
   {/each}
 {/snippet}
 
 {#snippet nonIdInputs(o: T)}
-  {#each Object.entries(prim) as [k, v]}
+  {#each Object.entries(o) as [k, v]}
     <!-- Skip if ID -->
     {#if k != "id"}
       <label for={k}>{k}</label>
-      <input name={k} type="text" />
+      <input name={k} type="text" class="border" />
     {/if}
   {/each}
 {/snippet}
 
-<div>
-  <section>
-    <h1>Create</h1>
+<div class="w-1/2 flex-grow grid border grid-cols-2">
+  <!-- CREATE -->
+  <section class="mb-2 border-b col-span-2 grid grid-cols-subgrid">
+    <h1 class="text-center col-span-2">Create</h1>
     <form
+      class="grid grid-cols-subgrid col-span-2"
       onsubmit={(e) => {
         e.preventDefault();
         let formData = new FormData(e.currentTarget);
@@ -101,12 +103,15 @@
       }}
     >
       {@render nonIdInputs(prim)}
-      <button type="submit">Submit</button>
+      <button type="submit" class="border px-2 py-0.5 col-start-2"
+        >Submit</button
+      >
     </form>
   </section>
-  <section>
-    <h1>Read</h1>
+  <section class="mb-2 border-b col-span-2 grid grid-cols-subgrid">
+    <h1 class="text-center col-span-2">Read</h1>
     <form
+      class="grid grid-cols-subgrid col-span-2"
       onsubmit={(e) => {
         e.preventDefault();
         let formData = new FormData(e.currentTarget);
@@ -118,12 +123,15 @@
       }}
     >
       {@render idInputs(prim)}
-      <button type="submit">Submit</button>
+      <button type="submit" class="border px-2 py-0.5 col-start-2"
+        >Submit</button
+      >
     </form>
   </section>
-  <section>
-    <h1>Update</h1>
+  <section class="mb-2 border-b col-span-2 grid grid-cols-subgrid">
+    <h1 class="text-center col-span-2">Update</h1>
     <form
+      class="grid grid-cols-subgrid col-span-2"
       onsubmit={(e) => {
         e.preventDefault();
         let formData = new FormData(e.currentTarget);
@@ -138,14 +146,16 @@
       }}
     >
       {@render idInputs(prim)}
-      <hr />
       {@render nonIdInputs(prim)}
-      <button type="submit">Submit</button>
+      <button type="submit" class="border px-2 py-0.5 col-start-2"
+        >Submit</button
+      >
     </form>
   </section>
-  <section>
-    <h1>Delete</h1>
+  <section class="mb-2 border-b col-span-2 grid grid-cols-subgrid">
+    <h1 class="text-center col-span-2">Delete</h1>
     <form
+      class="grid grid-cols-subgrid col-span-2"
       onsubmit={(e) => {
         e.preventDefault();
         let formData = new FormData(e.currentTarget);
@@ -156,7 +166,9 @@
       }}
     >
       {@render idInputs(prim)}
-      <button type="submit">Submit</button>
+      <button type="submit" class="border px-2 py-0.5 col-start-2"
+        >Submit</button
+      >
     </form>
   </section>
 </div>

@@ -27,7 +27,7 @@
       }}
       endpoint="http://localhost:5133/api/passengers"
     />
-    <aside>
+    <aside class="w-1/2 flex-grow">
       {#each data.passengers as App.Passenger[] as p}
         <pre style="font-family: monospace;">{JSON.stringify(p)}</pre>
       {/each}
@@ -55,7 +55,7 @@
       }}
       endpoint="http://localhost:5133/api/trains"
     />
-    <aside>
+    <aside class="w-1/2 flex-grow">
       {#each data.trains as App.Train[] as t}
         <pre style="font-family: monospace;">{JSON.stringify(t)}</pre>
       {/each}
@@ -81,7 +81,7 @@
       }}
       endpoint="http://localhost:5133/api/schedules"
     />
-    <aside>
+    <aside class="w-1/2 flex-grow">
       {#each data.schedules as App.Schedule[] as s}
         <pre style="font-family: monospace;">{JSON.stringify(s)}</pre>
       {/each}
@@ -111,7 +111,7 @@
       }}
       endpoint="http://localhost:5133/api/tickets"
     />
-    <aside>
+    <aside class="w-1/2 flex-grow">
       {#each data.tickets as App.Ticket[] as tx}
         <pre style="font-family: monospace;">{JSON.stringify(tx)}</pre>
       {/each}
