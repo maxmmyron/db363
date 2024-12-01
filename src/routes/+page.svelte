@@ -6,45 +6,115 @@
 
   let d = $state(data);
   $effect(() => console.log(d));
-
-  let createPassenger = async (f: string, l: string) => {
-    let res = await fetch(
-      `http://localhost:5133/api/passengers/create?first_name=${f}&last_name=${l}`,
-      {
-        method: "POST",
-      }
-    );
-    console.log(res);
-    return res;
-  };
 </script>
 
-<button onclick={() => createPassenger("Steve", "Jobs")}> create</button>
-
-{#if data?.err}<p>error! {data.err}</p>{:else}
-  <h1>Trains</h1>
-  {#each data.trains as App.Train[] as t}
-    <pre style="font-family: monospace;">{JSON.stringify(t)}</pre>
-  {/each}
-  <h1>passengers</h1>
-  {#each data.passengers as App.Passenger[] as p}
-    <pre style="font-family: monospace;">{JSON.stringify(p)}</pre>
-  {/each}
-  <h1>schedules</h1>
-  {#each data.schedules as App.Schedule[] as s}
-    <pre style="font-family: monospace;">{JSON.stringify(s)}</pre>
-  {/each}
-  <h1>tix</h1>
-  {#each data.tickets as App.Ticket[] as tx}
-    <pre style="font-family: monospace;">{JSON.stringify(tx)}</pre>
-  {/each}
+{#if data?.err}
+  <p>Error! {data.err}</p>
 {/if}
 
-<CrudPanel
-  prim={{
-    id: new Map<string, string>([["id", ""]]),
-    first_name: "",
-    last_name: "",
-  }}
-  endpoint="http://localhost:5133/api/passengers"
-/>
+<section>
+  <h1 class="flex-grow">Passengers</h1>
+  <div class="flex gap-2">
+    <CrudPanel
+      requestSent={async () => {
+        let res = await fetch("http://localhost:5133/api/passengers/");
+        data.passengers = await res.json();
+      }}
+      prim={{
+        id: new Map<string, string>([["id", ""]]),
+        first_name: "",
+        last_name: "",
+      }}
+      endpoint="http://localhost:5133/api/passengers"
+    />
+    <aside>
+      {#each data.passengers as App.Passenger[] as p}
+        <pre style="font-family: monospace;">{JSON.stringify(p)}</pre>
+      {/each}
+    </aside>
+  </div>
+</section>
+
+<section>
+  <h1 class="flex-grow">Trains</h1>
+  <div class="flex gap-2">
+    <CrudPanel
+      requestSent={async () => {
+        let res = await fetch("http://localhost:5133/api/trains/");
+        data.trains = await res.json();
+      }}
+      prim={{
+        id: new Map<string, string>([["id", ""]]),
+        schedule_id: "",
+        schedule_route: "",
+        schedule_departure: "",
+        station_name: "",
+        station_arrival: "",
+        station_departure: "",
+        status: "",
+      }}
+      endpoint="http://localhost:5133/api/trains"
+    />
+    <aside>
+      {#each data.trains as App.Train[] as t}
+        <pre style="font-family: monospace;">{JSON.stringify(t)}</pre>
+      {/each}
+    </aside>
+  </div>
+</section>
+
+<section>
+  <h1 class="flex-grow">Schedules</h1>
+  <div class="flex gap-2">
+    <CrudPanel
+      requestSent={async () => {
+        let res = await fetch("http://localhost:5133/api/schedules/");
+        data.schedules = await res.json();
+      }}
+      prim={{
+        id: new Map<string, string>([["id", ""]]),
+        origin_name: "",
+        origin_route: "",
+        dest_name: "",
+        dest_route: "",
+        direction: "",
+      }}
+      endpoint="http://localhost:5133/api/schedules"
+    />
+    <aside>
+      {#each data.schedules as App.Schedule[] as s}
+        <pre style="font-family: monospace;">{JSON.stringify(s)}</pre>
+      {/each}
+    </aside>
+  </div>
+</section>
+
+<section>
+  <h1 class="flex-grow">Tickets</h1>
+  <div class="flex gap-2">
+    <CrudPanel
+      requestSent={async () => {
+        let res = await fetch("http://localhost:5133/api/tickets/");
+        data.tickets = await res.json();
+      }}
+      prim={{
+        id: new Map<string, string>([
+          ["passenger_id", ""],
+          ["train_id", ""],
+        ]),
+        departure: "",
+        origin_name: "",
+        origin_route: "",
+        dest_name: "",
+        dest_route: "",
+        direction: "",
+      }}
+      endpoint="http://localhost:5133/api/tickets"
+    />
+    <aside>
+      {#each data.tickets as App.Ticket[] as tx}
+        <pre style="font-family: monospace;">{JSON.stringify(tx)}</pre>
+      {/each}
+    </aside>
+  </div>
+</section>
