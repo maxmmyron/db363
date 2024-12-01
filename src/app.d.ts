@@ -14,13 +14,17 @@ declare global {
 		};
 
 		type Passenger = {
-			id: number;
+			id: {
+				id: number;
+			};
 			first_name: string;
 			last_name: string;
 		};
 
 		type Schedule = {
-			id: number;
+			id: {
+				id: number;
+			};
 			origin_name: string;
 			origin_route: string;
 			dest_name: string;
