@@ -12,7 +12,7 @@
 
 ## Overview of setup:
 
-On first load, Spring will look for `data.sql` which will set up the initial database content:
+On first load, Spring will look for `./src/main/resources/init.sql` which will set up the initial database content:
 
 > Spring Boot can automatically create the schema (DDL scripts) of your JDBC DataSource or R2DBC ConnectionFactory and initialize its data (DML scripts).
 > By default, it loads schema scripts from optional:classpath*:schema.sql and data scripts from optional:classpath*:data.sql. The locations of these schema and data scripts can be customized using spring.sql.init.schema-locations and spring.sql.init.data-locations respectively. The optional: prefix means that the application will start even when the files do not exist. To have the application fail to start when the files are absent, remove the optional: prefix.
@@ -21,11 +21,9 @@ On first load, Spring will look for `data.sql` which will set up the initial dat
 
 After loading the SQL db successfully, the spring application runs on port 5133, which front-end can communicate with.
 
-## Project design
+## Database Design
 
-### MYSQL database schemas
-
-#### Table: Train
+### Table: Train
 
 An individual train that may be given a schedule.
 
@@ -51,7 +49,9 @@ TODO:
 **Demonstration of normal form:**
 TODO:
 
-#### Table: Station
+---
+
+### Table: Station
 
 A station that can house a train.
 _NOTE: Route is described in this table so we can associate a station with multiple routes; e.g. Park Street -> Green and Red line_
@@ -68,7 +68,9 @@ TODO:
 **Demonstration of normal form:**
 TODO:
 
-#### Link
+---
+
+### Link
 
 A connection between two stations via a train along a route. Used to describe time/distance for individual route components.
 
@@ -89,7 +91,9 @@ TODO:
 **Demonstration of normal form:**
 TODO:
 
-#### Table: Schedule
+---
+
+### Table: Schedule
 
 A schedule that specifies a route a train may run along.
 
@@ -108,7 +112,9 @@ TODO:
 **Demonstration of normal form:**
 TODO:
 
-#### Table: Ticket
+---
+
+### Table: Ticket
 
 A ticket specifies a passenger's single trip along a scheduled route.
 _NOTE: More complex trips (like those with interchanges) require more than one ticket._
@@ -134,7 +140,9 @@ TODO:
 **Demonstration of normal form:**
 TODO:
 
-#### Table: Passenger
+---
+
+### Table: Passenger
 
 A passenger. May have a ticket for a route.
 
@@ -154,31 +162,7 @@ TODO:
 **Demonstration of normal form:**
 TODO:
 
-## Features
-
-- [x] CRUD ops using front end
-- [x] cascades to remove redundant data (e.g. remove ticket if schedule removed)
-- [ ] timer to automatically update table contents (e.g. moving train from station to station).
-
-## Logic examples
-
-### Getting the arrival time for a given ticket
-
-```js
-let time = tix.departure_time;
-let station = tix.source_id;
-while (station != tix.dest_id) {
-  if (tix.dir == "inbound") {
-    time += station.inbound_time + station.loading_time;
-    station = station.inbound;
-  } else {
-    time += station.outbound_time + station.loading_time;
-    station = station.inbound;
-  }
-}
-
-return time;
-```
+---
 
 ## API Design
 
@@ -435,9 +419,23 @@ Slugs: `id: string`
 
 ---
 
-## Project info
+## Logic Design
 
-- `./src/main/resources/init.sql`: mysql setup file (ran on first run to init tables n whatnot)
+### Primary Features
+
+- [x] CRUD ops using front end
+- [x] cascades to remove redundant data (e.g. remove ticket if schedule removed)
+- [x] timer to automatically update table contents (e.g. moving train from station to station).
+
+### Common Operations and queries
+
+#### `getTrainArrivalTime(ticket: App.Ticket, timestamp: number): number`
+
+Returns the number of milliseconds before the ticket's associated train reaches the platform, or -1 if the train has already departed the platform.
+
+#### `tick(timestamp: number)`
+
+## updates each train with a schedule according to the following rules:
 
 ## Troubleshooting
 
