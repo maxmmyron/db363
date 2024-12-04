@@ -3,28 +3,22 @@
 declare global {
 	namespace App {
 		type Link = {
-			id: {
-				origin_name: string;
-				origin_route: string;
-				dest_name: string;
-				dest_route: string;
-			};
+			origin_name: string;
+			origin_route: string;
+			dest_name: string;
+			dest_route: string;
 			distance: number;
 			duration: number;
 		};
 
 		type Passenger = {
-			id: {
-				id: number;
-			};
+			id: number;
 			first_name: string;
 			last_name: string;
 		};
 
 		type Schedule = {
-			id: {
-				id: number;
-			};
+			id: number;
 			origin_name: string;
 			origin_route: string;
 			dest_name: string;
@@ -33,18 +27,14 @@ declare global {
 		};
 
 		type Station = {
-			id: {
-				name: string;
-				train_route: string;
-			};
+			name: string;
+			train_route: string;
 			loading_time: number;
 		};
 
 		type Ticket = {
-			id: {
-				passenger_id: number;
-				train_id: number;
-			};
+			passenger_id: number;
+			train_id: number;
 			departure: Date;
 			origin_name: string;
 			origin_route: string;
@@ -61,6 +51,8 @@ declare global {
 			station_name: string | null;
 			station_arrival: Date | null;
 			station_departure: Date | null;
+			link_origin: string | null;
+			link_dest: string | null;
 			status: string;
 		};
 
