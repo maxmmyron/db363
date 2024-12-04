@@ -3,8 +3,8 @@
 ## Stack
 
 - mysql (db)
-- java spring (backend)
-- svelte (front end)
+- java spring (back end)
+- SvelteKit (front end)
 
 ## Requirements
 
@@ -12,7 +12,7 @@
 
 ## Overview of setup:
 
-On first load, Spring will look for schema.sql and data.sql files which set up the database:
+On first load, Spring will look for `data.sql` which will set up the initial database content:
 
 > Spring Boot can automatically create the schema (DDL scripts) of your JDBC DataSource or R2DBC ConnectionFactory and initialize its data (DML scripts).
 > By default, it loads schema scripts from optional:classpath*:schema.sql and data scripts from optional:classpath*:data.sql. The locations of these schema and data scripts can be customized using spring.sql.init.schema-locations and spring.sql.init.data-locations respectively. The optional: prefix means that the application will start even when the files do not exist. To have the application fail to start when the files are absent, remove the optional: prefix.
@@ -21,14 +21,13 @@ On first load, Spring will look for schema.sql and data.sql files which set up t
 
 After loading the SQL db successfully, the spring application runs on port 5133, which front-end can communicate with.
 
-## Database design
+## Project design
 
-### Table: Train
+### MYSQL database schemas
 
-An individual train that may be given a schedule. Has the following relationships:
+#### Table: Train
 
-- nullable 1:1 w/ Station (One train _may_ be at one station; One station _may_ have one train at it.)
-- M:1 w/ Schedule (A train is assigned one schedule; one schedule may have many trains assigned to it.)
+An individual train that may be given a schedule.
 
 | Name            | Type        | PK  | Description                                                                       |
 | --------------- | ----------- | --- | --------------------------------------------------------------------------------- |
@@ -41,9 +40,21 @@ An individual train that may be given a schedule. Has the following relationship
 | departure       | Time        |     | The time the train departed the station. NULL if the train is at a station.       |
 | status          | String      |     | in route, arriving, boarding, departing, etc.                                     |
 
-### Table: Station
+**Relationships:**
+
+- nullable 1:1 w/ Station (One train _may_ be at one station; One station _may_ have one train at it.)
+- M:1 w/ Schedule (A train is assigned one schedule; one schedule may have many trains assigned to it.)
+
+**Functional dependencies:**
+TODO:
+
+**Demonstration of normal form:**
+TODO:
+
+#### Table: Station
 
 A station that can house a train.
+_NOTE: Route is described in this table so we can associate a station with multiple routes; e.g. Park Street -> Green and Red line_
 
 | Name         | Type   | PK  | Description                                    |
 | ------------ | ------ | --- | ---------------------------------------------- |
@@ -51,9 +62,13 @@ A station that can house a train.
 | route        | String | PRI | The route assigned to this station (see below) |
 | loading_time | Number |     | How long the train is at the station for       |
 
-_Note:_ Route is described in this table so we can associate a station with multiple routes; e.g. Park Street -> Green and Red line
+**Functional dependencies:**
+TODO:
 
-### Link
+**Demonstration of normal form:**
+TODO:
+
+#### Link
 
 A connection between two stations via a train along a route. Used to describe time/distance for individual route components.
 
@@ -68,7 +83,13 @@ _NOTE: Primary key is composed of two composite foreign keys (one for origin sta
 | Duration     | Number       |     | The time it takes to go between the two stations |
 | Distance     | NUmber       |     | The distance between the two stations            |
 
-### Table: Schedule
+**Functional dependencies:**
+TODO:
+
+**Demonstration of normal form:**
+TODO:
+
+#### Table: Schedule
 
 A schedule that specifies a route a train may run along.
 
@@ -81,13 +102,15 @@ A schedule that specifies a route a train may run along.
 | dest_route   | VARACHAR(48)   | FRN |                    |
 | dir          | TrainDirection |     | direction of train |
 
-### Table: Ticket
+**Functional dependencies:**
+TODO:
 
-A ticket specifies a passenger's single trip along a scheduled route. Has the following relationships:
+**Demonstration of normal form:**
+TODO:
 
-- M:1 w/ Passenger (Many tickets can be allocated to a single passenger; one passenger may have many tickets)
-- M:1 w/ Train (Many tickets may specify a single train; one train may have many tickets)
+#### Table: Ticket
 
+A ticket specifies a passenger's single trip along a scheduled route.
 _NOTE: More complex trips (like those with interchanges) require more than one ticket._
 
 | Name         | Type         | PK  | Description                               |
@@ -100,19 +123,42 @@ _NOTE: More complex trips (like those with interchanges) require more than one t
 | dest_route   | VARCHAR(48)  | FRN |                                           |
 | departure    | Time         |     | When the train departs the origin station |
 
-### Table: Passenger
+**Relationships:**
+
+- M:1 w/ Passenger (Many tickets can be allocated to a single passenger; one passenger may have many tickets)
+- M:1 w/ Train (Many tickets may specify a single train; one train may have many tickets)
+
+**Functional dependencies:**
+TODO:
+
+**Demonstration of normal form:**
+TODO:
+
+#### Table: Passenger
 
 A passenger. May have a ticket for a route.
-
-Cascades:
-
-- On Deletion: Any associated ticket should be deleted.
 
 | Name  | Type   | Description |
 | ----- | ------ | ----------- |
 | ID    |        |             |
 | First | String |             |
 | Last  | String |             |
+
+**Cascades:**
+
+- On Deletion: Any associated ticket should be deleted.
+
+**Functional dependencies:**
+TODO:
+
+**Demonstration of normal form:**
+TODO:
+
+## Features
+
+- [x] CRUD ops using front end
+- [x] cascades to remove redundant data (e.g. remove ticket if schedule removed)
+- [ ] timer to automatically update table contents (e.g. moving train from station to station).
 
 ## Logic examples
 
@@ -134,13 +180,270 @@ while (station != tix.dest_id) {
 return time;
 ```
 
+## API Design
+
+### `/api/links`
+
+#### `GET /api/links`
+
+Returns all links.
+
+Slugs: none
+Search params: none
+
+#### `GET /api/links/{route}`
+
+Returns a single link by route, origin station, and destination station.
+
+Slugs:
+
+- `route: string`
+
+Search params:
+
+- `origin: string`
+- `dest: string`
+
+---
+
+### `/api/passengers`
+
+#### `GET /api/passengers`
+
+Returns all passengers.
+
+---
+
+#### `POST /api/passengers/create`
+
+Creates a new passenger.
+
+Search params:
+
+- `first_name: string`
+- `last_name: string`
+
+---
+
+#### `GET /api/passengers/{id}`
+
+Retrieves a single passenger by ID.
+
+Slugs: `id: string`
+
+---
+
+#### `PUT /api/passengers/{id}`
+
+Updates a passenger.
+
+Slugs: `id: string`
+
+Search params:
+
+- `first_name: string`
+- `last_name: string`
+
+---
+
+#### `DELETE /api/passengers/{id}`
+
+Deletes a passenger.
+
+Slugs: `id: string`
+
+---
+
+### `/api/schedules`
+
+#### `GET /api/schedules`
+
+Returns all schedules.
+
+---
+
+#### `POST /api/schedules/create`
+
+Creates a new schedule.
+
+Search Params:
+
+- `origin: string`
+- `dest: string`
+- `route: string`
+- `dir: INBOUND | OUTBOUND`
+
+---
+
+#### `GET /api/schedules/{id}`
+
+Retrieves a single schedule by ID.
+
+Slugs: `id: string`
+
+---
+
+#### `PUT /api/schedules/{id}`
+
+Updates a schedule.
+
+Slugs: `id: string`
+
+Search Params:
+
+- `origin: string`
+- `dest: string`
+- `route: string`
+- `dir: INBOUND | OUTBOUND`
+
+---
+
+#### `DELETE /api/schedules/{id}`
+
+Deletes a schedule.
+
+Slugs: `id: string`
+
+---
+
+### `/api/stations`
+
+#### `GET /api/stations`
+
+Returns all stations.
+
+---
+
+#### `GET /api/stations/{route}/{name}`
+
+Returns a single station by route and name.
+
+Slugs:
+
+- `route: string`
+- `name: string`
+
+---
+
+### `/api/tickets`
+
+#### `GET /api/tickets`
+
+Returns all tickets.
+
+---
+
+#### `POST /api/tickets/create`
+
+Creates a new ticket.
+
+Search Params:
+
+- `passenger: long`
+- `train: long`
+- `route: string`
+- `origin: string`
+- `dest: string`
+- `departure: string`
+- `dir: INBOUND | OUTBOUND`
+
+---
+
+#### `GET /api/tickets/{id}`
+
+Retrieves a single ticket by ID.
+
+Slugs: `id: string`
+
+---
+
+#### `PUT /api/tickets/{id}`
+
+Updates a ticket.
+
+Slugs: `id: string`
+
+Search Params:
+
+- `passenger: long`
+- `train: long`
+- `route: string`
+- `origin: string`
+- `dest: string`
+- `departure: string`
+- `dir: INBOUND | OUTBOUND`
+
+---
+
+#### `DELETE /api/tickets/{id}`
+
+Deletes a ticket.
+
+Slugs: `id: string`
+
+---
+
+### `/api/trains`
+
+#### `GET /api/trains`
+
+Returns all trains.
+
+---
+
+#### `POST /api/trains/create`
+
+Creates a new train.
+
+Search Params:
+
+- `route: string`
+- `origin: string`
+- `status: string`
+- `schedule: long`
+
+---
+
+#### `GET /api/trains/{id}`
+
+Retrieves a single train by ID.
+
+Slugs: `id: string`
+
+---
+
+#### `PUT /api/trains/{id}`
+
+Updates a train.
+
+Slugs: `id: string`
+
+Search Params:
+
+- `route: string`
+- `origin: string`
+- `status: string`
+- `schedule: long`
+
+---
+
+#### `DELETE /api/trains/{id}`
+
+Deletes a train.
+
+Slugs: `id: string`
+
+---
+
 ## Project info
 
 - `./src/main/resources/init.sql`: mysql setup file (ran on first run to init tables n whatnot)
 
 ## Troubleshooting
 
-### Fails to connect: "Port in use" (dep. bc docker no longer used in project)
+### Fails to connect: "Port in use"
+
+Occurs during non-standard shutdown of back end. Requires manual kill of process using port:
 
 - `netstat -ano | findstr 5133`; note PID of task(s) using port
 - `taskkill /F /PID <pid>`
