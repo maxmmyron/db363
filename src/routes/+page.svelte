@@ -1,11 +1,19 @@
 <script lang="ts">
   import CrudPanel from "$lib/CRUDPanel.svelte";
+  import { updateTables } from "$lib/index";
   import type { PageData } from "./$types";
 
   let { data }: { data: PageData } = $props();
 
   let d = $state(data);
   $effect(() => console.log(d));
+
+  let time = $state(new Date("2020-01-01T08:00:00").getUTCMilliseconds());
+  $effect(() => updateTables(time));
+
+  setInterval(() => {
+    time += 1000 * 60;
+  }, 1000 * 60);
 </script>
 
 {#if data?.err}

@@ -5,3 +5,7 @@ export const formatAPIObject = (endpoint: string, obj: Object) => {
   Object.entries(obj).forEach(([key, val]) => endpoint += `${key}=${val}&`);
   return endpoint.substring(0, endpoint.length - 1);
 }
+
+export const updateTables = (timestamp: number) => {
+  let t = new Date(timestamp);
+};
