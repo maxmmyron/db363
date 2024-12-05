@@ -123,8 +123,33 @@ INSERT INTO Link (origin_name, origin_route, dest_name, dest_route, duration, di
   ("Residential Area", "Line 4", "School District", "Line 4", 11, 11),
   ("School District", "Line 4", "Park & Ride", "Line 4", 10, 10);
 
--- INSERT INTO Train (trainRoute, station, trainStatus) VALUES
---   ("Line 1", "City Hall", "BOARDING");
+INSERT INTO Schedule (origin_name, origin_route, dest_name, dest_route, direction) VALUES
+  ('Waterfront', 'Line 1', 'Museum', 'Line 1', 'INBOUND'),
+  ('Museum', 'Line 1', 'Waterfront', 'Line 1', 'OUTBOUND'),
+  ('Airport Express', 'Line 2', 'Beach Terminal', 'Line 2', 'INBOUND'),
+  ('Beach Terminal', 'Line 2', 'Airport Express', 'Line 2', 'OUTBOUND'),
+  ('North Station', 'Line 3', 'Food Court', 'Line 3', 'INBOUND'),
+  ('Food Court', 'Line 3', 'North Station', 'Line 3', 'OUTBOUND'),
+  ('West Terminal', 'Line 4', 'Park & Ride', 'Line 4', 'INBOUND'),
+  ('Park & Ride', 'Line 4', 'West Terminal', 'Line 4', 'OUTBOUND');
 
--- INSERT INTO Ticket (passenger, train, source, dest, departure, direction) VALUES
+INSERT INTO Train (schedule_id, schedule_departure, station_name, station_route, station_arrival, station_departure, link_origin_name, link_origin_route, link_dest_name, link_dest_route, train_status) VALUES
+(1, '2024-01-01 08:00:00', 'Museum', 'Line 1', '2024-01-01 08:00:00', NULL, 'Library', 'Line 1', 'Museum', 'Line 1', 'Boarding'),
+(1, '2024-01-01 09:00:00', 'Museum', 'Line 1', '2024-01-01 09:00:00', NULL, 'Library', 'Line 1', 'Museum', 'Line 1', 'Boarding'),
+(2, '2024-01-01 08:00:00', 'Waterfront', 'Line 1', '2024-01-01 08:00:00', NULL, 'Waterfront', 'Line 1', 'City Hall', 'Line 1', 'Boarding'),
+(2, '2024-01-01 09:00:00', 'Waterfront', 'Line 1', '2024-01-01 09:00:00', NULL, 'Waterfront', 'Line 1', 'City Hall', 'Line 1', 'Boarding'),
+(3, '2024-01-01 08:00:00', 'Beach Terminal', 'Line 2', '2024-01-01 08:00:00', NULL, 'Ocean View', 'Line 2', 'Beach Terminal', 'Line 2', 'Boarding'),
+(4, '2024-01-01 09:00:00', 'Beach Terminal', 'Line 2', '2024-01-01 09:00:00', NULL, 'Ocean View', 'Line 2', 'Beach Terminal', 'Line 2', 'Boarding'),
+(4, '2024-01-01 08:00:00', 'Airport Express', 'Line 2', '2024-01-01 08:00:00', NULL, 'Airport Express', 'Line 2', 'Business District', 'Line 2', 'Boarding'),
+(4, '2024-01-01 09:00:00', 'Airport Express', 'Line 2', '2024-01-01 09:00:00', NULL, 'Airport Express', 'Line 2', 'Business District', 'Line 2', 'Boarding'),
+(5, '2024-01-01 08:00:00', 'Shopping Plaza', 'Line 3', '2024-01-01 08:00:00', NULL, 'Food Court', 'Line 3', 'Shopping Plaza', 'Line 3', 'Boarding'),
+(5, '2024-01-01 09:00:00', 'Shopping Plaza', 'Line 3', '2024-01-01 09:00:00', NULL, 'Food Court', 'Line 3', 'Shopping Plaza', 'Line 3', 'Boarding'),
+(6, '2024-01-01 08:00:00', 'North Station', 'Line 3', '2024-01-01 08:00:00', NULL, 'North Station', 'Line 3', 'Science Park', 'Line 3', 'Boarding'),
+(6, '2024-01-01 09:00:00', 'North Station', 'Line 3', '2024-01-01 09:00:00', NULL, 'North Station', 'Line 3', 'Science Park', 'Line 3', 'Boarding'),
+(7, '2024-01-01 08:00:00', 'Park & Ride', 'Line 4', '2024-01-01 08:00:00', NULL, 'School District', 'Line 4', 'Park & Ride', 'Line 4', 'Boarding'),
+(7, '2024-01-01 09:00:00', 'Park & Ride', 'Line 4', '2024-01-01 09:00:00', NULL, 'School District', 'Line 4', 'Park & Ride', 'Line 4', 'Boarding'),
+(8, '2024-01-01 08:00:00', 'West Terminal', 'Line 4', '2024-01-01 08:00:00', NULL, 'West Terminal', 'Line 4', 'Industrial Park', 'Line 4', 'Boarding'),
+(8, '2024-01-01 09:00:00', 'West Terminal', 'Line 4', '2024-01-01 09:00:00', NULL, 'West Terminal', 'Line 4', 'Industrial Park', 'Line 4', 'Boarding');
+
+-- INSERT INTO Ticket (passenger_id, train_id, departure, origin_name, origin_route, dest_name, dest_route, direction) VALUES
 --   (1, 1, )

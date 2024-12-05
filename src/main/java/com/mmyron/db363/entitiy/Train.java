@@ -36,10 +36,10 @@ public class Train {
 
 	@ManyToOne
 	@JoinColumns({
-		@JoinColumn(name="link_origin_name", referencedColumnName = "origin_name"),
-		@JoinColumn(name="link_origin_route", referencedColumnName = "origin_route"),
-		@JoinColumn(name="link_dest_name", referencedColumnName = "dest_name"),
-		@JoinColumn(name="link_dest_route", referencedColumnName = "dest_route")
+		@JoinColumn(name="link_origin_name", referencedColumnName = "origin_name", columnDefinition = "VARCHAR(64)"),
+		@JoinColumn(name="link_origin_route", referencedColumnName = "origin_route", columnDefinition = "VARCHAR(48)"),
+		@JoinColumn(name="link_dest_name", referencedColumnName = "dest_name", columnDefinition = "VARCHAR(64)"),
+		@JoinColumn(name="link_dest_route", referencedColumnName = "dest_route", columnDefinition = "VARCHAR(48)")
 	})
 	private Link link;
 

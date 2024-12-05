@@ -8,7 +8,7 @@
   let d = $state(data);
   $effect(() => console.log(d));
 
-  let time = $state(new Date("2020-01-01T08:00:00").getUTCMilliseconds());
+  let time = $state(new Date("2024-01-01T08:00:00").getUTCMilliseconds());
   $effect(() => {
     tick(time);
   });
