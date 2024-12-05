@@ -27,20 +27,20 @@ After loading the SQL db successfully, the spring application runs on port 5133,
 
 An individual train that may be given a schedule.
 
-| Name               | Type        | PK  | Description                                                                       |
-| ------------------ | ----------- | --- | --------------------------------------------------------------------------------- |
-| id                 |             | PRI |                                                                                   |
-| schedule_id        | Schedule.id | FRN | The current schedule assigned to this train                                       |
-| schedule_departure | Time        |     | Departure time from initial station                                               |
-| station_name       | String      | FRN | The station the train is at. (May be null)                                        |
-| station_route      | String      | FRN | The station the train is at. (May be null)                                        |
-| station_arrival    | Time        |     | The time the train arrived at the station. NULL if the train is not at a station. |
-| station_departure  | Time        |     | The time the train departed the station. NULL if the train is at a station.       |
-| link_origin_name   | String      | FRN |                                                                                   |
-| link_origin_route  | String      | FRN |                                                                                   |
-| link_dest_name     | String      | FRN |                                                                                   |
-| link_dest_route    | String      | FRN |                                                                                   |
-| train_status       | String      |     | in route, arriving, boarding, departing, etc.                                     |
+| Name               | Type          | PK  | Description                                                                              |
+| ------------------ | ------------- | --- | ---------------------------------------------------------------------------------------- |
+| id                 |               | PRI |                                                                                          |
+| schedule_id        | Schedule.id   | FRN | The current schedule assigned to this train                                              |
+| schedule_departure | LocalDateTime |     | DepartureLocalDateTimefrom initial station                                               |
+| station_name       | String        | FRN | The station the train is at. (May be null)                                               |
+| station_route      | String        | FRN | The station the train is at. (May be null)                                               |
+| station_arrival    | LocalDateTime |     | TheLocalDateTimethe train arrived at the station. NULL if the train is not at a station. |
+| station_departure  | LocalDateTime |     | TheLocalDateTimethe train departed the station. NULL if the train is at a station.       |
+| link_origin_name   | String        | FRN |                                                                                          |
+| link_origin_route  | String        | FRN |                                                                                          |
+| link_dest_name     | String        | FRN |                                                                                          |
+| link_dest_route    | String        | FRN |                                                                                          |
+| train_status       | String        |     | in route, arriving, boarding, departing, etc.                                            |
 
 **Relationships:**
 
@@ -80,14 +80,14 @@ A connection between two stations via a train along a route. Used to describe ti
 
 _NOTE: Primary key is composed of two composite foreign keys (one for origin station, one for destination station)._
 
-| Name         | Type         | PK  | Description                                      |
-| ------------ | ------------ | --- | ------------------------------------------------ |
-| origin_name  | VARACHAR(64) | FRN |                                                  |
-| origin_route | VARCHAR(48)  | FRN |                                                  |
-| dest_name    | VARACHAR(64) | FRN |                                                  |
-| dest_route   | VARACHAR(48) | FRN |                                                  |
-| duration     | Number       |     | The time it takes to go between the two stations |
-| distance     | NUmber       |     | The distance between the two stations            |
+| Name         | Type         | PK  | Description                                             |
+| ------------ | ------------ | --- | ------------------------------------------------------- |
+| origin_name  | VARACHAR(64) | FRN |                                                         |
+| origin_route | VARCHAR(48)  | FRN |                                                         |
+| dest_name    | VARACHAR(64) | FRN |                                                         |
+| dest_route   | VARACHAR(48) | FRN |                                                         |
+| duration     | Number       |     | TheLocalDateTimeit takes to go between the two stations |
+| distance     | NUmber       |     | The distance between the two stations                   |
 
 **Functional dependencies:**
 TODO:
@@ -123,15 +123,15 @@ TODO:
 A ticket specifies a passenger's single trip along a scheduled route.
 _NOTE: More complex trips (like those with interchanges) require more than one ticket._
 
-| Name         | Type         | PK  | Description                               |
-| ------------ | ------------ | --- | ----------------------------------------- |
-| passenger_id | Passenger.id | PRI | The passenger this ticket belongs to      |
-| train_id     | Train.id     | PRI | The train to board for this ticket        |
-| origin_name  | VARCHAR(64)  | FRN |                                           |
-| origin_route | VARCHAR(48)  | FRN |                                           |
-| dest_name    | VARCHAR(64)  | FRN |                                           |
-| dest_route   | VARCHAR(48)  | FRN |                                           |
-| departure    | Time         |     | When the train departs the origin station |
+| Name         | Type          | PK  | Description                               |
+| ------------ | ------------- | --- | ----------------------------------------- |
+| passenger_id | Passenger.id  | PRI | The passenger this ticket belongs to      |
+| train_id     | Train.id      | PRI | The train to board for this ticket        |
+| origin_name  | VARCHAR(64)   | FRN |                                           |
+| origin_route | VARCHAR(48)   | FRN |                                           |
+| dest_name    | VARCHAR(64)   | FRN |                                           |
+| dest_route   | VARCHAR(48)   | FRN |                                           |
+| departure    | LocalDateTime |     | When the train departs the origin station |
 
 **Relationships:**
 
@@ -442,14 +442,14 @@ Returns the number of milliseconds before the ticket's associated train reaches 
 Updates each trains status based on a few rules:
 
 - If the train has no schedule: continue.
-- If the train is in transit, and the time in transit > link's transit time:
+- If the train is in transit, and theLocalDateTimein transit > link's transit time:
   - move train to next station, update link and arrival time
-- If the train is at a station, and the time at station >= station's loading time:
+- If the train is at a station, and theLocalDateTimeat station >= station's loading time:
   - move train to transit, update departure time.
 
 #### `async getTicketTransitTime(ticket: Ticket, timestamp: number) => Promise<number>`
 
-Gets either the total travel time for the ticket (from source to destination).
+Gets either the total travelLocalDateTimefor the ticket (from source to destination).
 
 ---
 

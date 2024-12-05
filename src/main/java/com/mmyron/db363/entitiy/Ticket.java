@@ -1,6 +1,6 @@
 package com.mmyron.db363.entitiy;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 import org.hibernate.annotations.Check;
 import org.hibernate.annotations.Checks;
@@ -51,7 +51,7 @@ public class Ticket {
 	private Station dest;
 
 	@Column(nullable = false)
-	private Date departure;
+	private LocalDateTime departure;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -59,7 +59,7 @@ public class Ticket {
 
 	public Ticket() {}
 
-	public Ticket(TicketPK id, Station origin, Station dest, Date departure, TrainDirection dir) {
+	public Ticket(TicketPK id, Station origin, Station dest, LocalDateTime departure, TrainDirection dir) {
 		this.id = id;
 		this.origin = origin;
 		this.dest = dest;
@@ -109,11 +109,11 @@ public class Ticket {
 		this.dest = dest;
 	}
 
-	public Date getDeparture() {
+	public LocalDateTime getDeparture() {
 		return departure;
 	}
 
-	public void setDeparture(Date departure) {
+	public void setDeparture(LocalDateTime departure) {
 		this.departure = departure;
 	}
 

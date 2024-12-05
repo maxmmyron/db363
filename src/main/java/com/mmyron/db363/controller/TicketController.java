@@ -1,6 +1,7 @@
 package com.mmyron.db363.controller;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -55,13 +56,14 @@ public class TicketController {
 			@RequestParam(name = "route", required = true) String route,
 			@RequestParam(name = "origin", required = true) String origin, 
 			@RequestParam(name = "dest", required = true) String dest, 
-			@RequestParam(name = "departure", required = true) Date dep, 
+			@RequestParam(name = "departure", required = true) String dep, 
 			@RequestParam(name = "dir", required = true) String dir) {
 		Passenger p = passengerRepo.findById(pId).orElse(null);
 		Train t = trainRepo.findById(tId).orElse(null);
 		Station o = stationRepo.findById(new StationPK(origin, route)).orElse(null);
 		Station d = stationRepo.findById(new StationPK(dest, route)).orElse(null);
 		TrainDirection tDir = null;
+		LocalDateTime time = null;
 	
 		try {
 			tDir = TrainDirection.valueOf(dir);
@@ -69,18 +71,25 @@ public class TicketController {
 			tDir = null;
 		}
 		
-		if(!Stream.of(p, t, o, d, tDir).allMatch((x) -> x != null)) {
+		try {
+			time = LocalDateTime.parse(dep);
+		} catch (DateTimeParseException e) {
+			time = null;
+		}
+		
+		if(!Stream.of(p, t, o, d, tDir, time).allMatch((x) -> x != null)) {
 			String err = "Error creating ticket: \n";
 			if(p == null) err += "\t- Passenger " + pId + "does not exist\n";
 			if(t == null) err += "\t- Train " + tId + "does not exist\n";
 			if(o == null) err += "\t- Station" + origin + " does not exist on route " + route + "\n";
 			if(d == null) err += "\t- Station" + dest + " does not exist on route " + route + "\n";
 			if(tDir == null) err += "\t- Direction is invalid (must be INBOUND or OUTBOUND)";
+			if(time == null) err += "\t- Could not parse time " + dep +"\n";
 			
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, err);
 		}
 		
-		Ticket tx = new Ticket(new TicketPK(pId, tId), o, d, dep, tDir);
+		Ticket tx = new Ticket(new TicketPK(pId, tId), o, d, time, tDir);
 		ticketRepo.save(tx);
 		
 		return tx;
@@ -110,7 +119,7 @@ public class TicketController {
 			@RequestParam(name = "route") String route,
 			@RequestParam(name = "origin") String origin, 
 			@RequestParam(name = "dest") String dest, 
-			@RequestParam(name = "departure") Date dep, 
+			@RequestParam(name = "departure") String dep, 
 			@RequestParam(name = "dir") String dir) {
 		Ticket tx = ticketRepo.findById(id).orElse(null);
 		if(tx == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error updating ticket: No ticket found with ID " + id);
@@ -124,7 +133,7 @@ public class TicketController {
 		
 		if(t != null && t.getSchedule() == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error updating ticket: Train " + tId + "has no assigned schedule");
 		
-		String trainScheudleRoute = t.getSchedule().getOriginStation().getId().getTrainRoute();
+		String trainScheudleRoute = t.getSchedule().getOrigin().getId().getRoute();
 		
 		route = route == null ? trainScheudleRoute : route;
 		origin = origin == null ? tx.getOrigin().getId().getName() : origin;
@@ -134,6 +143,7 @@ public class TicketController {
 		Station d = stationRepo.findById(new StationPK(dest, route)).orElse(null);
 		
 		TrainDirection tDir = null;
+		LocalDateTime time = null;
 	
 		try {
 			tDir = TrainDirection.valueOf(dir);
@@ -141,13 +151,20 @@ public class TicketController {
 			tDir = null;
 		}
 		
-		if(!Stream.of(p, t, o, d, tDir).allMatch((x) -> x != null)) {
+		try {
+			time = LocalDateTime.parse(dep);
+		} catch (DateTimeParseException e) {
+			time = null;
+		}
+		
+		if(!Stream.of(p, t, o, d, tDir, time).allMatch((x) -> x != null)) {
 			String err = "Error updating ticket: \n";
 			if(p == null) err += "\t- Passenger " + pId + "does not exist\n";
 			if(t == null) err += "\t- Train " + tId + "does not exist\n";
 			if(o == null) err += "\t- Station" + origin + " does not exist on route " + route + "\n";
 			if(d == null) err += "\t- Station" + dest + " does not exist on route " + route + "\n";
 			if(tDir == null) err += "\t- Direction is invalid (must be INBOUND or OUTBOUND)";
+			if(time == null) err += "\t- Could not parse time " + dep +"\n";
 			
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, err);
 		}
@@ -158,7 +175,7 @@ public class TicketController {
 		tx.setId(new TicketPK(pId, tId));
 		tx.setOrigin(o);
 		tx.setDest(d);
-		tx.setDeparture(dep);
+		tx.setDeparture(time);
 		tx.setDirection(tDir);
 		
 		ticketRepo.save(tx);

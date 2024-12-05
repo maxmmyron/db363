@@ -51,14 +51,14 @@ public class Schedule {
 		@JoinColumn(name="origin_name", referencedColumnName = "name", columnDefinition = "VARCHAR(64)", nullable = false),
 		@JoinColumn(name="origin_route", referencedColumnName = "train_route", columnDefinition = "VARCHAR(48)", nullable = false),
 	})
-	private Station originStation;
+	private Station origin;
 
 	@ManyToOne
 	@JoinColumns({
 		@JoinColumn(name="dest_name", referencedColumnName = "name", columnDefinition = "VARCHAR(64)", nullable = false),
 		@JoinColumn(name="dest_route", referencedColumnName = "train_route", columnDefinition = "VARCHAR(48)", nullable = false),
 	})
-	private Station destStation;
+	private Station dest;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -71,8 +71,8 @@ public class Schedule {
 	public Schedule() {}
 
 	public Schedule(Station origin, Station dest, TrainDirection dir) {
-		this.originStation = origin;
-		this.destStation = dest;
+		this.origin = origin;
+		this.dest = dest;
 		this.direction = dir;
 	}
 
@@ -86,20 +86,20 @@ public class Schedule {
 		this.id = id;
 	}
 
-	public Station getOriginStation() {
-		return originStation;
+	public Station getOrigin() {
+		return origin;
 	}
 
-	public void setOriginStation(Station originStation) {
-		this.originStation = originStation;
+	public void setOrigin(Station origin) {
+		this.origin = origin;
 	}
 
-	public Station getDestStation() {
-		return destStation;
+	public Station getDest() {
+		return dest;
 	}
 
-	public void setDestStation(Station destStation) {
-		this.destStation = destStation;
+	public void setDest(Station dest) {
+		this.dest = dest;
 	}
 	
 	public TrainDirection getDirection() {

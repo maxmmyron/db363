@@ -82,7 +82,7 @@ public class TrainController {
 		Train t = trainRepo.findById(id).orElse(null);
 		if(t == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error updating train: Train " + id + " does not exist."); 
 		
-		route = route == null ? t.getStation().getId().getTrainRoute() : route;
+		route = route == null ? t.getStation().getId().getRoute() : route;
 		station = station == null ? t.getStation().getId().getName() : station;
 		Station s = stationRepo.findById(new StationPK(station, route)).orElse(null);
 		

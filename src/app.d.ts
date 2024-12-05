@@ -3,29 +3,29 @@
 declare global {
 	namespace App {
 		type Link = {
-			originStation: App.Station;
-			destStation: App.Station;
+			origin: App.Station;
+			dest: App.Station;
 			distance: number;
 			duration: number;
 		};
 
 		type Passenger = {
 			id: number;
-			first_name: string;
-			last_name: string;
+			firstName: string;
+			lastName: string;
 		};
 
 		type Schedule = {
 			id: number;
-			originStation: App.Station;
-			destStation: App.Station;
+			origin: App.Station;
+			dest: App.Station;
 			direction: App.TrainDirection;
 		};
 
 		type Station = {
 			name: string;
-			train_route: string;
-			loading_time: number;
+			route: string;
+			loadingTime: number;
 		};
 
 		type Ticket = {
@@ -39,14 +39,13 @@ declare global {
 
 		type Train = {
 			id: number;
-			// schedule
 			schedule: App.Schedule | null;
 			station: App.Station | null;
 			link: App.Link | null;
-			schedule_departure: Date | null;
-			station_arrival: Date | null;
-			station_departure: Date | null;
-			train_status: string;
+			schedDep: Date | null;
+			stationArrival: Date | null;
+			stationDep: Date | null;
+			status: string;
 		};
 
 		enum TrainDirection { "INBOUND", "OUTBOUND" };

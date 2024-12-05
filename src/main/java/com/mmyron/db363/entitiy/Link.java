@@ -59,7 +59,7 @@ public class Link {
 		@JoinColumn(name="origin_name", referencedColumnName = "name", columnDefinition = "VARCHAR(64)", nullable = false),
 		@JoinColumn(name="origin_route", referencedColumnName = "train_route", columnDefinition = "VARCHAR(48)", nullable = false),
 	})
-	private Station originStation;
+	private Station origin;
 
 	@ManyToOne
 	@MapsId("dest")
@@ -67,7 +67,7 @@ public class Link {
 		@JoinColumn(name="dest_name", referencedColumnName = "name", columnDefinition = "VARCHAR(64)", nullable = false),
 		@JoinColumn(name="dest_route", referencedColumnName = "train_route", columnDefinition = "VARCHAR(48)", nullable = false),
 	})
-	private Station destStation;
+	private Station dest;
 
 	@Check(constraints = "duration > 0")
 	@Column(nullable = false)
@@ -99,20 +99,20 @@ public class Link {
 		this.id = linkPK;
 	}
 	
-	public Station getOriginStation() {
-		return originStation;
+	public Station getOrigin() {
+		return origin;
 	}
 
-	public void setOriginStation(Station originStation) {
-		this.originStation = originStation;
+	public void setOrigin(Station origin) {
+		this.origin = origin;
 	}
 
-	public Station getDestStation() {
-		return destStation;
+	public Station getDest() {
+		return dest;
 	}
 
-	public void setDestStation(Station destStation) {
-		this.destStation = destStation;
+	public void setDest(Station dest) {
+		this.dest = dest;
 	}
 	
 	public Integer getDuration() {

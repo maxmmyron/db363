@@ -13,25 +13,25 @@ public class StationPK implements Serializable {
 	@Column(length = 64)
 	private String name;
 	@Column(name="train_route", length = 48)
-	private String trainRoute;
+	private String route;
 	
 	public StationPK() {}
 
-	public StationPK(String name, String trainRoute) {
+	public StationPK(String name, String route) {
 		this.name = name;
-		this.trainRoute = trainRoute;
+		this.route = route;
 	}
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof StationPK stationPK)) return false;
-		return Objects.equals(name, stationPK.name) && Objects.equals(trainRoute, stationPK.trainRoute);
+		return Objects.equals(name, stationPK.name) && Objects.equals(route, stationPK.route);
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, trainRoute);
+		return Objects.hash(name, route);
 	}
 	
 	public String getName() {
@@ -42,11 +42,11 @@ public class StationPK implements Serializable {
 		this.name = name;
 	}
 
-	public String getTrainRoute() {
-		return trainRoute;
+	public String getRoute() {
+		return route;
 	}
 
-	public void setTrainRoute(String trainRoute) {
-		this.trainRoute = trainRoute;
+	public void setRoute(String route) {
+		this.route = route;
 	}
 }

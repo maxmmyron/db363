@@ -1,6 +1,6 @@
 package com.mmyron.db363.entitiy;
 
-import java.sql.Time;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -45,17 +45,17 @@ public class Train {
 	private Link link;
 
 	@Column(name="station_departure")
-	private Time stationDep = null;
+	private LocalDateTime stationDep = null;
 
 	@Column(name="station_arrival")
-	private Time stationArrival = null;
+	private LocalDateTime stationArrival = null;
 
 	@ManyToOne
 	@JoinColumn(name="schedule_id", referencedColumnName = "id", nullable = true)
 	private Schedule schedule = null;
 
 	@Column(name="schedule_departure")
-	private Time schedDep;
+	private LocalDateTime schedDep;
 
 	@Column(name="train_status", nullable = false)
 	private String status;
@@ -110,7 +110,7 @@ public class Train {
 	public void setSchedule(Schedule schedule) {
 		this.schedule = schedule;
 	}
-	
+
 	public Link getLink() {
 		return link;
 	}
@@ -119,27 +119,27 @@ public class Train {
 		this.link = link;
 	}
 
-	public Time getStationDep() {
+	public LocalDateTime getStationDep() {
 		return stationDep;
 	}
 
-	public void setStationDep(Time stationDep) {
+	public void setStationDep(LocalDateTime  stationDep) {
 		this.stationDep = stationDep;
 	}
 
-	public Time getStationArrival() {
+	public LocalDateTime getStationArrival() {
 		return stationArrival;
 	}
 
-	public void setStationArrival(Time stationArrival) {
+	public void setStationArrival(LocalDateTime  stationArrival) {
 		this.stationArrival = stationArrival;
 	}
 
-	public Time getSchedDep() {
+	public LocalDateTime getSchedDep() {
 		return schedDep;
 	}
 
-	public void setSchedDep(Time schedDep) {
+	public void setSchedDep(LocalDateTime  schedDep) {
 		this.schedDep = schedDep;
 	}
 
