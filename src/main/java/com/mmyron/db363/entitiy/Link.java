@@ -20,6 +20,8 @@ import java.util.Set;
 import org.hibernate.annotations.Check;
 import org.hibernate.annotations.Checks;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -76,6 +78,7 @@ public class Link {
 	private Integer distance;
 
 	@OneToMany(mappedBy = "link")
+	@JsonIgnore
 	private Set<Train> trains = new HashSet<>();
 	
 	public Link() {}

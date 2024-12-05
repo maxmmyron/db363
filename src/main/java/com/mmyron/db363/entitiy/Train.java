@@ -7,6 +7,7 @@ import java.util.Set;
 import org.hibernate.annotations.Check;
 import org.hibernate.annotations.Checks;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mmyron.db363.util.TrainDirection;
 
 import jakarta.persistence.CascadeType;
@@ -60,6 +61,7 @@ public class Train {
 	private String status;
 
 	@OneToMany(mappedBy = "train")
+	@JsonIgnore
 	private Set<Ticket> tickets = new HashSet<>();
 
 	public Train() {}

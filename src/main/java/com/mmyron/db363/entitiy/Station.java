@@ -3,6 +3,8 @@ package com.mmyron.db363.entitiy;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EmbeddedId;
@@ -17,9 +19,11 @@ public class Station {
 	private StationPK id;
 
 	@OneToMany(mappedBy="originStation")
+	@JsonIgnore
 	private Set<Link> inboundLinks = new HashSet<>();
 
 	@OneToMany(mappedBy="destStation")
+	@JsonIgnore
 	private Set<Link> outboundLinks = new HashSet<>();
 	
 	@Column(name="loading_time", nullable = false)

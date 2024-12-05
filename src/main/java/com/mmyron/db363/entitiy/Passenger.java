@@ -3,6 +3,8 @@ package com.mmyron.db363.entitiy;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,6 +26,7 @@ public class Passenger {
 	private String lastName;
 	
 	@OneToMany(mappedBy = "passenger", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private Set<Ticket> tickets = new HashSet<>(); 
 	
 	public Passenger() {}
