@@ -28,14 +28,19 @@ public class Train {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name="station_name", referencedColumnName = "name", nullable = true)
+	@JoinColumns({
+		@JoinColumn(name="station_name", referencedColumnName = "name", nullable = true),
+		@JoinColumn(name="station_route", referencedColumnName = "train_route", nullable = true)
+	})
 	private Station station;
 
 	@ManyToOne
-	@JoinColumns(
-		@JoinColumn(name="link_origin", referencedColumnName="origin_name", nullable=true)
-		@JoinColumn(name="link_dest", referencedColumnName="dest_name", nullable=true)
-	)
+	@JoinColumns({
+		@JoinColumn(name="link_origin_name", referencedColumnName = "origin_name"),
+		@JoinColumn(name="link_origin_route", referencedColumnName = "origin_route"),
+		@JoinColumn(name="link_dest_name", referencedColumnName = "dest_name"),
+		@JoinColumn(name="link_dest_route", referencedColumnName = "dest_route")
+	})
 	private Link link;
 
 	@Column(name="station_departure")
@@ -45,10 +50,7 @@ public class Train {
 	private Time stationArrival = null;
 
 	@ManyToOne
-	@JoinColumns({
-		@JoinColumn(name="schedule_id", referencedColumnName = "id", nullable = true),
-		@JoinColumn(name="schedule_route", referencedColumnName = "origin_route", nullable = true)
-	})
+	@JoinColumn(name="schedule_id", referencedColumnName = "id", nullable = true)
 	private Schedule schedule = null;
 
 	@Column(name="schedule_departure")

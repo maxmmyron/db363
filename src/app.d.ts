@@ -45,15 +45,20 @@ declare global {
 
 		type Train = {
 			id: number;
+			// schedule
 			schedule_id: number | null;
-			schedule_route: string | null;
 			schedule_departure: Date | null;
+			// curr station
 			station_name: string | null;
+			station_route: string | null;
 			station_arrival: Date | null;
 			station_departure: Date | null;
-			link_origin: string | null;
-			link_dest: string | null;
-			status: string;
+			// link
+			link_origin_name: string | null;
+			link_origin_route: string | null;
+			link_dest_name: string | null
+			link_dest_route: string | null;
+			train_status: string;
 		};
 
 		enum TrainDirection { "INBOUND", "OUTBOUND" };

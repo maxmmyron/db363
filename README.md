@@ -27,16 +27,20 @@ After loading the SQL db successfully, the spring application runs on port 5133,
 
 An individual train that may be given a schedule.
 
-| Name            | Type        | PK  | Description                                                                       |
-| --------------- | ----------- | --- | --------------------------------------------------------------------------------- |
-| id              |             | PRI |                                                                                   |
-| schedule        | Schedule.id | FRN | The current schedule assigned to this train                                       |
-| sched_departure | Time        |     | Departure time from initial station                                               |
-| station_name    | String      | FRN | The station the train is at. (May be null)                                        |
-| station_route   | String      | FRN | The station the train is at. (May be null)                                        |
-| arrival         | Time        |     | The time the train arrived at the station. NULL if the train is not at a station. |
-| departure       | Time        |     | The time the train departed the station. NULL if the train is at a station.       |
-| status          | String      |     | in route, arriving, boarding, departing, etc.                                     |
+| Name               | Type        | PK  | Description                                                                       |
+| ------------------ | ----------- | --- | --------------------------------------------------------------------------------- |
+| id                 |             | PRI |                                                                                   |
+| schedule_id        | Schedule.id | FRN | The current schedule assigned to this train                                       |
+| schedule_departure | Time        |     | Departure time from initial station                                               |
+| station_name       | String      | FRN | The station the train is at. (May be null)                                        |
+| station_route      | String      | FRN | The station the train is at. (May be null)                                        |
+| station_arrival    | Time        |     | The time the train arrived at the station. NULL if the train is not at a station. |
+| station_departure  | Time        |     | The time the train departed the station. NULL if the train is at a station.       |
+| link_origin_name   | String      | FRN |                                                                                   |
+| link_origin_route  | String      | FRN |                                                                                   |
+| link_dest_name     | String      | FRN |                                                                                   |
+| link_dest_route    | String      | FRN |                                                                                   |
+| train_status       | String      |     | in route, arriving, boarding, departing, etc.                                     |
 
 **Relationships:**
 
@@ -59,7 +63,7 @@ _NOTE: Route is described in this table so we can associate a station with multi
 | Name         | Type   | PK  | Description                                    |
 | ------------ | ------ | --- | ---------------------------------------------- |
 | name         | String | PRI | Human-readable name of station                 |
-| route        | String | PRI | The route assigned to this station (see below) |
+| train_route  | String | PRI | The route assigned to this station (see below) |
 | loading_time | Number |     | How long the train is at the station for       |
 
 **Functional dependencies:**
@@ -82,8 +86,8 @@ _NOTE: Primary key is composed of two composite foreign keys (one for origin sta
 | origin_route | VARCHAR(48)  | FRN |                                                  |
 | dest_name    | VARACHAR(64) | FRN |                                                  |
 | dest_route   | VARACHAR(48) | FRN |                                                  |
-| Duration     | Number       |     | The time it takes to go between the two stations |
-| Distance     | NUmber       |     | The distance between the two stations            |
+| duration     | Number       |     | The time it takes to go between the two stations |
+| distance     | NUmber       |     | The distance between the two stations            |
 
 **Functional dependencies:**
 TODO:
@@ -121,8 +125,8 @@ _NOTE: More complex trips (like those with interchanges) require more than one t
 
 | Name         | Type         | PK  | Description                               |
 | ------------ | ------------ | --- | ----------------------------------------- |
-| passenger    | Passenger.id | PRI | The passenger this ticket belongs to      |
-| train        | Train.id     | PRI | The train to board for this ticket        |
+| passenger_id | Passenger.id | PRI | The passenger this ticket belongs to      |
+| train_id     | Train.id     | PRI | The train to board for this ticket        |
 | origin_name  | VARCHAR(64)  | FRN |                                           |
 | origin_route | VARCHAR(48)  | FRN |                                           |
 | dest_name    | VARCHAR(64)  | FRN |                                           |
@@ -146,11 +150,11 @@ TODO:
 
 A passenger. May have a ticket for a route.
 
-| Name  | Type   | Description |
-| ----- | ------ | ----------- |
-| ID    |        |             |
-| First | String |             |
-| Last  | String |             |
+| Name       | Type   | Description |
+| ---------- | ------ | ----------- |
+| id         |        |             |
+| first_name | String |             |
+| last_name  | String |             |
 
 **Cascades:**
 

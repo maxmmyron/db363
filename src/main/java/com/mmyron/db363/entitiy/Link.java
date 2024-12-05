@@ -14,6 +14,9 @@
 
 package com.mmyron.db363.entitiy;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.hibernate.annotations.Check;
 import org.hibernate.annotations.Checks;
 
@@ -24,6 +27,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -71,6 +75,9 @@ public class Link {
 	@Column(nullable = false)
 	private Integer distance;
 
+	@OneToMany(mappedBy = "link")
+	private Set<Train> trains = new HashSet<>();
+	
 	public Link() {}
 
 	public Link(StationPK origin, StationPK dest, Integer duration, Integer distance) {
