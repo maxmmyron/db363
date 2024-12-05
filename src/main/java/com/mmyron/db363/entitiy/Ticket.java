@@ -31,7 +31,7 @@ public class Ticket {
 	@ManyToOne
 	@MapsId("passengerId")
 	private Passenger passenger;
-	
+
 	@ManyToOne
 	@MapsId("trainId")
 	private Train train;
@@ -75,6 +75,22 @@ public class Ticket {
 	
 	public void setId(TicketPK id) {
 		this.id = id;
+	}
+	
+	public Passenger getPassenger() {
+		return passenger;
+	}
+
+	public void setPassenger(Passenger passenger) {
+		this.passenger = passenger;
+	}
+
+	public Train getTrain() {
+		return train;
+	}
+
+	public void setTrain(Train train) {
+		this.train = train;
 	}
 
 	public Station getOrigin() {

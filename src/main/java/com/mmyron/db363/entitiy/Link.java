@@ -94,18 +94,39 @@ public class Link {
 	public LinkPK getId() {
 		return id;
 	}
+	
 	public void setId(LinkPK linkPK) {
 		this.id = linkPK;
 	}
+	
+	public Station getOriginStation() {
+		return originStation;
+	}
+
+	public void setOriginStation(Station originStation) {
+		this.originStation = originStation;
+	}
+
+	public Station getDestStation() {
+		return destStation;
+	}
+
+	public void setDestStation(Station destStation) {
+		this.destStation = destStation;
+	}
+	
 	public Integer getDuration() {
 		return duration;
 	}
+	
 	public void setDuration(Integer duration) {
 		this.duration = duration;
 	}
+	
 	public Integer getDistance() {
 		return distance;
 	}
+	
 	public void setDistance(Integer distance) {
 		this.distance = distance;
 	}

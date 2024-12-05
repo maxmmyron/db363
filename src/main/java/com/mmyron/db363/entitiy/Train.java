@@ -110,6 +110,38 @@ public class Train {
 	public void setSchedule(Schedule schedule) {
 		this.schedule = schedule;
 	}
+	
+	public Link getLink() {
+		return link;
+	}
+
+	public void setLink(Link link) {
+		this.link = link;
+	}
+
+	public Time getStationDep() {
+		return stationDep;
+	}
+
+	public void setStationDep(Time stationDep) {
+		this.stationDep = stationDep;
+	}
+
+	public Time getStationArrival() {
+		return stationArrival;
+	}
+
+	public void setStationArrival(Time stationArrival) {
+		this.stationArrival = stationArrival;
+	}
+
+	public Time getSchedDep() {
+		return schedDep;
+	}
+
+	public void setSchedDep(Time schedDep) {
+		this.schedDep = schedDep;
+	}
 
 	// overrides
 
