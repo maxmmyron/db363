@@ -429,13 +429,25 @@ Slugs: `id: string`
 
 ### Common Operations and queries
 
-#### `getTrainArrivalTime(ticket: App.Ticket, timestamp: number): number`
+#### `async getTrainArrivalTime(ticket: Ticket, timestamp: number) => Promise<number>`
 
 Returns the number of milliseconds before the ticket's associated train reaches the platform, or -1 if the train has already departed the platform.
 
-#### `tick(timestamp: number)`
+#### `async tick(timestamp: number) => void`
 
-## updates each train with a schedule according to the following rules:
+Updates each trains status based on a few rules:
+
+- If the train has no schedule: continue.
+- If the train is in transit, and the time in transit > link's transit time:
+  - move train to next station, update link and arrival time
+- If the train is at a station, and the time at station >= station's loading time:
+  - move train to transit, update departure time.
+
+#### `async getTicketTransitTime(ticket: Ticket, timestamp: number) => Promise<number>`
+
+Gets either the total travel time for the ticket (from source to destination).
+
+---
 
 ## Troubleshooting
 
