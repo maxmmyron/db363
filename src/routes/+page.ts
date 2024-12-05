@@ -1,3 +1,4 @@
+import { error, redirect } from "@sveltejs/kit";
 import type { PageLoad } from "./$types"
 
 export const load: PageLoad = async ({ params, fetch }) => {
@@ -17,10 +18,36 @@ export const load: PageLoad = async ({ params, fetch }) => {
     };
   }
 
+  let trainsJSON: App.Train[], passengersJSON: App.Passenger[], schedulesJSON: App.Schedule[], ticketsJSON: App.Ticket[];
+
+  try {
+    trainsJSON = await trains.json()
+  } catch(err: any) {
+    throw error(400, `Train JSON Parse err: ${err}`);
+  }
+
+  try {
+    passengersJSON = await passengers.json()
+  } catch(err: any) {
+    throw error(400, `Train JSON Parse err: ${err}`);
+  }
+
+  try {
+    schedulesJSON = await schedules.json()
+  } catch(err: any) {
+    throw error(400, `Train JSON Parse err: ${err}`);
+  }
+
+  try {
+    ticketsJSON = await tickets.json()
+  } catch(err: any) {
+    throw error(400, `Train JSON Parse err: ${err}`);
+  }
+
   return {
-    trains: await trains.json() as App.Train[],
-    passengers: await passengers.json() as App.Passenger[],
-    schedules: await schedules.json() as App.Schedule[],
-    tickets: await tickets.json() as App.Ticket[],
+    trains: trainsJSON,
+    passengers: passengersJSON,
+    schedules: schedulesJSON,
+    tickets: ticketsJSON,
   };
 }

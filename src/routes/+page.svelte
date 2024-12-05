@@ -8,14 +8,19 @@
   let d = $state(data);
   $effect(() => console.log(d));
 
-  let time = $state(new Date("2024-01-01T08:00:00").getUTCMilliseconds());
+  let time = $state(new Date("2024-01-01T08:00:00").getTime());
   $effect(() => {
-    tick(time);
+    tick(time).then(async () => {
+      let res = await fetch("http://localhost:5133/api/passengers/");
+      data.passengers = await res.json();
+    });
   });
 
+  let paused = true;
+
   setInterval(() => {
-    time += 1000 * 60;
-  }, 1000 * 60);
+    if (!paused) time += 1000 * 60;
+  }, 1000);
 </script>
 
 {#if data?.err}
@@ -23,6 +28,12 @@
 {/if}
 
 <section>
+  {#key time}
+    <p class="">time: {new Date(time).toUTCString()}</p>
+  {/key}
+  <button onclick={() => (paused = !paused)}
+    >{paused ? "unpause" : "pause"}</button
+  >
   <h1 class="flex-grow">Passengers</h1>
   <div class="flex gap-2">
     <CrudPanel
