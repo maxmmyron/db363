@@ -22,13 +22,12 @@ export const tick = async (timestamp: number) => {
   for(const train of trains) {
     if(train.schedule_id === null) continue;
     const schedule: App.Schedule = await (await fetch(`http://localhost:5133/api/schedules/${train.schedule_id}`)).json();
-    if(train.link_origin === null || train.link_dest === null) throw new Error(`Error updating train ${train.id}: schedule is not null, but train link is.`);
+    if(train.link_origin_name === null || train.link_dest_name === null) throw new Error(`Error updating train ${train.id}: schedule is not null, but train link is.`);
 
-    const route = train.schedule_route;
-    let link: App.Link = await (await fetch(`http://localhost:5133/api/links/${route}?origin=${train.link_origin}&dest=${train.link_dest}`)).json();
+    let link: App.Link = await (await fetch(`http://localhost:5133/api/links/${schedule.origin_route}?origin=${train.link_origin_name}&dest=${train.link_dest_name}`)).json();
 
     if(train.station_name != null) {
-      const station: App.Station = await (await fetch(`http://localhost:5133/api/stations/${route}/${train.station_name}`)).json();
+      const station: App.Station = await (await fetch(`http://localhost:5133/api/stations/${schedule.origin_route}/${train.station_name}`)).json();
       if(timestamp - train.station_arrival!.getMilliseconds() < station.loading_time) continue;
     } else {
       if(timestamp - train.station_departure!.getMilliseconds() < link.duration) continue;
@@ -60,10 +59,8 @@ export const getTrainArrivalTime = async (ticket: App.Ticket, timestamp: number)
   if(schedule == null) throw new Error(`Error getting train arrival time for ticket: ${train.schedule_id} doesn't exist.`);
 
   const links: App.Link[] = await (await fetch("http://localhost:5133/api/links")).json();
-  const route = train.schedule_route;
-
   // initial link
-  let link: App.Link = await (await fetch(`http://localhost:5133/api/links/${route}?origin=${train.link_origin}&dest=${train.link_dest}`)).json();
+  let link: App.Link = await (await fetch(`http://localhost:5133/api/links/${schedule.origin_route}?origin=${train.link_origin_name}&dest=${train.link_dest_name}`)).json();
 
   let d = 0;
 
@@ -71,7 +68,7 @@ export const getTrainArrivalTime = async (ticket: App.Ticket, timestamp: number)
     if(train.station_name === null) {
       d += link.duration - (timestamp - train.station_departure!.getMilliseconds());
     } else {
-      const station = await (await fetch(`http://localhost:5133/api/stations/${route}/${train.station_name}`)).json() as App.Station;
+      const station = await (await fetch(`http://localhost:5133/api/stations/${schedule.origin_route}/${train.station_name}`)).json() as App.Station;
       // if we're at origin or destination station, don't add loading time.
       if(train.station_name === ticket.origin_name || train.station_name === ticket.dest_name) break;
       d += station.loading_time - (timestamp - train.station_arrival!.getMilliseconds());
@@ -146,12 +143,12 @@ const moveTrain = (train: App.Train, schedule: App.Schedule, links: App.Link[], 
     // outbound trains move along link from to dest; next link is one whose origin === ticket.origin
 
     const p = schedule.direction === App.TrainDirection.INBOUND ? ((l: App.Link) => l.dest_name === link.origin_name) : ((l: App.Link) => l.origin_name === link.dest_name);
-    link = links.filter((l) => l.dest_route == train.schedule_route && l.origin_route === train.schedule_route).find(p)!;
+    link = links.filter((l) => l.dest_route == schedule.origin_route && l.origin_route === schedule.origin_route).find(p)!;
 
     train.station_name = schedule.direction === App.TrainDirection.INBOUND ? link.origin_name : link.dest_name;
     train.station_arrival = new Date(t);
-    train.link_origin = link.origin_name;
-    train.link_dest = link.dest_name;
+    train.link_origin_name = link.origin_name;
+    train.link_dest_name = link.dest_name;
   } else {
     train.station_name = null;
     train.station_departure = new Date(t);
