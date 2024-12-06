@@ -4,13 +4,8 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.hibernate.annotations.Check;
-import org.hibernate.annotations.Checks;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mmyron.db363.util.TrainDirection;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,9 +15,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Train {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,8 +64,6 @@ public class Train {
 	@JsonIgnore
 	private Set<Ticket> tickets = new HashSet<>();
 
-	public Train() {}
-
 	public Train(Station station, String trainStatus) {
 		this.station = station;
 		this.status = trainStatus;
@@ -75,78 +73,5 @@ public class Train {
 		this.station = station;
 		this.status = trainStatus;
 		this.schedule = schedule;
-	}
-
-	// getters & setters
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Station getStation() {
-		return station;
-	}
-
-	public void setStation(Station station) {
-		this.station = station;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String trainStatus) {
-		this.status = trainStatus;
-	}
-
-	public Schedule getSchedule() {
-		return schedule;
-	}
-
-	public void setSchedule(Schedule schedule) {
-		this.schedule = schedule;
-	}
-
-	public Link getLink() {
-		return link;
-	}
-
-	public void setLink(Link link) {
-		this.link = link;
-	}
-
-	public LocalDateTime getStationDep() {
-		return stationDep;
-	}
-
-	public void setStationDep(LocalDateTime  stationDep) {
-		this.stationDep = stationDep;
-	}
-
-	public LocalDateTime getStationArrival() {
-		return stationArrival;
-	}
-
-	public void setStationArrival(LocalDateTime  stationArrival) {
-		this.stationArrival = stationArrival;
-	}
-
-	public LocalDateTime getSchedDep() {
-		return schedDep;
-	}
-
-	public void setSchedDep(LocalDateTime  schedDep) {
-		this.schedDep = schedDep;
-	}
-
-	// overrides
-
-	@Override
-	public String toString() {
-		return id.toString();
 	}
 }

@@ -25,6 +25,9 @@ import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(uniqueConstraints = {
@@ -41,6 +44,9 @@ import jakarta.persistence.UniqueConstraint;
 	// station route equivalence constraint
 	@Check(constraints = "origin_route = dest_route"),
 })
+@Getter
+@Setter
+@NoArgsConstructor
 public class Schedule {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,53 +74,9 @@ public class Schedule {
 	@JsonIgnore
 	private Set<Train> trains = new HashSet<>();
 
-	public Schedule() {}
-
 	public Schedule(Station origin, Station dest, TrainDirection dir) {
 		this.origin = origin;
 		this.dest = dest;
 		this.direction = dir;
-	}
-
-	// getters & setters
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Station getOrigin() {
-		return origin;
-	}
-
-	public void setOrigin(Station origin) {
-		this.origin = origin;
-	}
-
-	public Station getDest() {
-		return dest;
-	}
-
-	public void setDest(Station dest) {
-		this.dest = dest;
-	}
-	
-	public TrainDirection getDirection() {
-		return direction;
-	}
-	
-	public void setDirection(TrainDirection dir) {
-		this.direction = dir;
-	}
-
-	public Set<Train> getTrains() {
-		return trains;
-	}
-
-	public void setTrains(Set<Train> trains) {
-		this.trains = trains;
 	}
 }

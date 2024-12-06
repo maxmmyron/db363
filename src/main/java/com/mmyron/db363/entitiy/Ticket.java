@@ -16,6 +16,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Checks({
@@ -24,6 +27,9 @@ import jakarta.persistence.MapsId;
 	// station route equivalence constraint
 	@Check(constraints = "origin_route = dest_route"),
 })
+@Getter
+@Setter
+@NoArgsConstructor
 public class Ticket {
 	@EmbeddedId
 	private TicketPK id;
@@ -57,71 +63,13 @@ public class Ticket {
 	@Column(nullable = false)
 	private TrainDirection direction;
 
-	public Ticket() {}
-
-	public Ticket(TicketPK id, Station origin, Station dest, LocalDateTime departure, TrainDirection dir) {
-		this.id = id;
+	public Ticket(Passenger passenger, Train train, Station origin, Station dest, LocalDateTime departure, TrainDirection dir) {
+		this.id = new TicketPK(passenger.getId(), train.getId());
+		this.passenger = passenger;
+		this.train = train;
 		this.origin = origin;
 		this.dest = dest;
 		this.departure = departure;
 		this.direction = dir;
-	}
-
-	// getters & setters
-
-	public TicketPK getId() {
-		return id;
-	}
-	
-	public void setId(TicketPK id) {
-		this.id = id;
-	}
-	
-	public Passenger getPassenger() {
-		return passenger;
-	}
-
-	public void setPassenger(Passenger passenger) {
-		this.passenger = passenger;
-	}
-
-	public Train getTrain() {
-		return train;
-	}
-
-	public void setTrain(Train train) {
-		this.train = train;
-	}
-
-	public Station getOrigin() {
-		return origin;
-	}
-
-	public void setOrigin(Station origin) {
-		this.origin = origin;
-	}
-
-	public Station getDest() {
-		return dest;
-	}
-
-	public void setDest(Station dest) {
-		this.dest = dest;
-	}
-
-	public LocalDateTime getDeparture() {
-		return departure;
-	}
-
-	public void setDeparture(LocalDateTime departure) {
-		this.departure = departure;
-	}
-
-	public TrainDirection getDirection() {
-		return direction;
-	}
-
-	public void setDirection(TrainDirection direction) {
-		this.direction = direction;
 	}
 }
