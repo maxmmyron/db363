@@ -33,6 +33,9 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(uniqueConstraints = {
@@ -49,6 +52,9 @@ import jakarta.persistence.UniqueConstraint;
 	// station route equivalence constraint
 	@Check(constraints = "origin_route = dest_route"),
 })
+@Getter
+@Setter
+@NoArgsConstructor
 public class Link {
 	@EmbeddedId
 	private LinkPK id;
@@ -80,54 +86,10 @@ public class Link {
 	@OneToMany(mappedBy = "link")
 	@JsonIgnore
 	private Set<Train> trains = new HashSet<>();
-	
-	public Link() {}
 
 	public Link(StationPK origin, StationPK dest, Integer duration, Integer distance) {
 		id = new LinkPK(origin, dest);
 		this.duration = duration;
-		this.distance = distance;
-	}
-
-	// getters & setters
-
-	public LinkPK getId() {
-		return id;
-	}
-	
-	public void setId(LinkPK linkPK) {
-		this.id = linkPK;
-	}
-	
-	public Station getOrigin() {
-		return origin;
-	}
-
-	public void setOrigin(Station origin) {
-		this.origin = origin;
-	}
-
-	public Station getDest() {
-		return dest;
-	}
-
-	public void setDest(Station dest) {
-		this.dest = dest;
-	}
-	
-	public Integer getDuration() {
-		return duration;
-	}
-	
-	public void setDuration(Integer duration) {
-		this.duration = duration;
-	}
-	
-	public Integer getDistance() {
-		return distance;
-	}
-	
-	public void setDistance(Integer distance) {
 		this.distance = distance;
 	}
 }
