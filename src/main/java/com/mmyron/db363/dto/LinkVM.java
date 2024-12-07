@@ -10,21 +10,28 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class LinkVM {
-	private String origin;
+	private StationVM origin;
 	
-	private String dest;
-	
-	private String route;
+	private StationVM dest;
 	
 	private Integer duration;
 	
 	private Integer distance;
 	
 	public LinkVM(Link link) {
-		origin = link.getOrigin().getId().getName();
-		dest = link.getDest().getId().getName();
-		route = link.getOrigin().getId().getRoute();
+		origin = new StationVM(link.getOrigin());
+		dest = new StationVM(link.getDest());
 		duration = link.getDuration();
 		distance = link.getDistance();
+	}
+	
+	@Override
+	public String toString() {
+		String originSt;
+		try { originSt = origin.toString(); } catch (NullPointerException e) { originSt = null; }
+		
+		String destSt;
+		try { destSt = dest.toString(); } catch (NullPointerException e) { destSt = null; }
+		return "{ origin: " + originSt + ", dest: " + destSt + ", " + duration + "m , " + distance + "km }";
 	}
 }

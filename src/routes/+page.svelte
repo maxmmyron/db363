@@ -11,13 +11,13 @@
   let time = $state(new Date("2024-01-01T08:00:00").getTime());
   $effect(() => {
     tick(time).then(async () => {
-      let res = await fetch("http://localhost:5133/api/passengers/");
-      data.passengers = await res.json();
+      console.log("tick complete... updating trains");
+      let res = await fetch("http://localhost:5133/api/trains/");
+      data.trains = await res.json();
     });
   });
 
-  let paused = true;
-
+  let paused = $state(true);
   setInterval(() => {
     if (!paused) time += 1000 * 60;
   }, 1000);
@@ -29,17 +29,18 @@
 
 <section>
   {#key time}
-    <p class="">time: {new Date(time).toUTCString()}</p>
+    <p class="">time: {new Date(time).toString()}</p>
   {/key}
-  <button onclick={() => (paused = !paused)}
+  <button onclick={() => (paused = !paused)} class="border"
     >{paused ? "unpause" : "pause"}</button
   >
+  <button onclick={() => (time += 1000 * 60)} class="border">tick</button>
   <h1 class="flex-grow">Passengers</h1>
   <div class="flex gap-2">
     <CrudPanel
       requestSent={async () => {
         let res = await fetch("http://localhost:5133/api/passengers/");
-        data.passengers = await res.json();
+        d.passengers = await res.json();
       }}
       prim={{
         id: new Map<string, string>([["id", ""]]),
@@ -49,7 +50,7 @@
       endpoint="http://localhost:5133/api/passengers"
     />
     <aside class="w-1/2 flex-grow">
-      {#each data.passengers as App.Passenger[] as p}
+      {#each d.passengers as App.Passenger[] as p}
         <pre style="font-family: monospace;">{JSON.stringify(p)}</pre>
       {/each}
     </aside>
@@ -62,7 +63,7 @@
     <CrudPanel
       requestSent={async () => {
         let res = await fetch("http://localhost:5133/api/trains/");
-        data.trains = await res.json();
+        d.trains = await res.json();
       }}
       prim={{
         id: new Map<string, string>([["id", ""]]),
@@ -77,7 +78,7 @@
       endpoint="http://localhost:5133/api/trains"
     />
     <aside class="w-1/2 flex-grow">
-      {#each data.trains as App.Train[] as t}
+      {#each d.trains as App.Train[] as t}
         <pre style="font-family: monospace;">{JSON.stringify(t)}</pre>
       {/each}
     </aside>
@@ -90,7 +91,7 @@
     <CrudPanel
       requestSent={async () => {
         let res = await fetch("http://localhost:5133/api/schedules/");
-        data.schedules = await res.json();
+        d.schedules = await res.json();
       }}
       prim={{
         id: new Map<string, string>([["id", ""]]),
@@ -103,7 +104,7 @@
       endpoint="http://localhost:5133/api/schedules"
     />
     <aside class="w-1/2 flex-grow">
-      {#each data.schedules as App.Schedule[] as s}
+      {#each d.schedules as App.Schedule[] as s}
         <pre style="font-family: monospace;">{JSON.stringify(s)}</pre>
       {/each}
     </aside>
@@ -116,7 +117,7 @@
     <CrudPanel
       requestSent={async () => {
         let res = await fetch("http://localhost:5133/api/tickets/");
-        data.tickets = await res.json();
+        d.tickets = await res.json();
       }}
       prim={{
         id: new Map<string, string>([
@@ -133,7 +134,7 @@
       endpoint="http://localhost:5133/api/tickets"
     />
     <aside class="w-1/2 flex-grow">
-      {#each data.tickets as App.Ticket[] as tx}
+      {#each d.tickets as App.Ticket[] as tx}
         <pre style="font-family: monospace;">{JSON.stringify(tx)}</pre>
       {/each}
     </aside>

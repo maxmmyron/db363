@@ -34,4 +34,9 @@ public class Station {
 	
 	@Column(name="loading_time", nullable = false)
 	private Integer loadingTime;
+	
+	@Override
+	public String toString() {
+		return "(" + id.getName() + ", " + id.getRoute() + ", " + loadingTime + "m)";
+	}
 }

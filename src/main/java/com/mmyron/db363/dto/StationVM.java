@@ -21,4 +21,9 @@ public class StationVM {
 		route = s.getId().getRoute();
 		loadingTime = s.getLoadingTime();
 	}
+	
+	@Override
+	public String toString() {
+		return "(" + name + ", " + route + ", " + loadingTime + "m)";
+	}
 }

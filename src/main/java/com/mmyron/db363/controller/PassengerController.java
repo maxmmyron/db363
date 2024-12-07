@@ -34,9 +34,9 @@ public class PassengerController {
 	// get auto-generated bean
 	@Autowired
 	private PassengerRepo passengerRepo;
-	
+
 	// create
-	
+
 	@PostMapping(path="/create")
 	public @ResponseBody PassengerVM addPassenger(@RequestBody PassengerVM pVM) {
 		Passenger p = new Passenger();
@@ -44,9 +44,9 @@ public class PassengerController {
 		p.setLastName(pVM.getLastName());
 		return new PassengerVM(passengerRepo.save(p));
 	}
-	
+
 	// read
-	
+
 	@GetMapping(path="/")
 	public @ResponseBody Iterable<PassengerVM> getPassengers() {
 		List<PassengerVM> ps = new ArrayList<>();
@@ -55,28 +55,28 @@ public class PassengerController {
 		}
 		return ps;
 	}
-	
+
 	@GetMapping(path="/{id}")
 	public @ResponseBody PassengerVM getPassenger(@PathVariable Long id) {
 		Optional<Passenger> p = passengerRepo.findById(id);
 		if(p.isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No passenger found with ID " + id);
 		return new PassengerVM(p.get());
 	}
-	
+
 	// update
-	
-	@PutMapping(path="/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public @ResponseBody PassengerVM updatePassenger(@PathVariable Long id, @RequestBody PassengerVM passenger) 
+
+	@PutMapping(path="/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody PassengerVM updatePassenger(@PathVariable Long id, @RequestBody PassengerVM passenger)
 	{
 		Passenger p = passengerRepo.findById(id).orElse(null);
-		if(p == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error updating passenger: Passenger" + id + " does not exist."); 
-		
+		if(p == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error updating passenger: Passenger" + id + " does not exist.");
+
 		if(passenger.getFirstName() != null) p.setFirstName(passenger.getFirstName());
 		if(passenger.getLastName() != null) p.setLastName(passenger.getLastName());
-		
+
 		return new PassengerVM(passengerRepo.save(p));
 	}
-	
+
 	// delete
 	@DeleteMapping(path="/{id}")
 	public @ResponseBody boolean deletePassenger(@PathVariable Long id) {

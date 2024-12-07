@@ -74,4 +74,11 @@ public class Train {
 		this.status = trainStatus;
 		this.schedule = schedule;
 	}
+	
+	@Override
+	public String toString() {
+		String st;
+		try { st = station.toString(); } catch (NullPointerException e) { st = null; }
+		return "id: " + id + "; station: "+ st + "; link: " + link.toString() + ";" ;
+	}
 }

@@ -21,29 +21,41 @@ export const tick = async (timestamp: number) => {
   const links: App.Link[] = await (await fetch("http://localhost:5133/api/links/")).json();
 
   for(const train of trains) {
+    console.log(train.id);
     if(train.schedule === null) continue;
+    console.log(`ticking train ${train.id}`);
     if(train.link === null) throw new Error(`Error updating train ${train.id}: schedule is not null, but train link is.`);
 
     const route = train.schedule.origin.route;
+    console.log(route);
 
-    let link: App.Link = await (await fetch(`http://localhost:5133/api/links/${route}?origin=${route}&dest=${train.link.dest.name}`)).json();
+    let res = fetch(`http://localhost:5133/api/links/${route}?origin=${train.link.origin.name}&dest=${train.link.dest.name}`);
+
+    console.log(res);
+
+    let link: App.Link = await (await res).json();
+
+    console.log(link);
 
     if(train.station != null) {
-      const station: App.Station = await (await fetch(`http://localhost:5133/api/stations/${route}/${train.station.name}`)).json();
-      console.log(`${timestamp - train.stationArrival!.getTime()} < ${station.loadingTime} = ${timestamp - train.stationArrival!.getTime() < station.loadingTime}`);
-      if(timestamp - train.stationArrival!.getTime() < station.loadingTime) continue;
+      console.log(`moving out of station...`);
+      const arrival = Date.parse(train.stationArrival!);
+      console.log(`${timestamp - arrival} < ${train.station.loadingTime * 1000} = ${timestamp - arrival < train.station.loadingTime * 1000}`);
+      if(timestamp - arrival < train.station.loadingTime * 1000) continue;
     } else {
       console.log(`moving into station...`);
-      console.log(`${timestamp - train.stationDep!.getTime()} < ${link.duration} = ${timestamp - train.stationDep!.getTime() < link.duration}`);
-      if(timestamp - train.stationDep!.getTime() < link.duration) continue;
+      const dep = Date.parse(train.stationDep!);
+      console.log(`${timestamp - dep} < ${link.duration * 1000} = ${timestamp - dep < link.duration * 1000}`);
+      if(timestamp - dep < link.duration * 1000) continue;
     }
 
     console.log('moving train...');
 
     // update train object in DB
-    await fetch(formatAPIObject("http://localhost:5133/api/trains", moveTrain(train, links, timestamp)), {
-      method: "PUT"
-    });
+    const newTrain = moveTrain(train, links, timestamp);
+    await fetch(`http://localhost:5133/api/trains/${train.id}`, { method: "PUT", headers: {
+      'Content-Type': "application/json"
+    }, body: JSON.stringify(newTrain)});
   }
 };
 
@@ -67,11 +79,11 @@ export const getTrainArrivalTime = async (ticket: App.Ticket, timestamp: number)
 
   while(ticket.train.station?.name !== ticket.train.schedule?.dest.name) {
     if(!ticket.train.station?.name) {
-      d += link.duration - (timestamp - ticket.train.stationDep!.getTime());
+      d += link.duration - (timestamp - Date.parse(ticket.train.stationDep!));
     } else {
       // if we're at origin or destination station, don't add loading time.
       if(ticket.train.station.name === ticket.origin.name || ticket.train.station.name === ticket.dest.name) break;
-      d += ticket.train.station.loadingTime - (timestamp - ticket.train.stationArrival!.getTime());
+      d += ticket.train.station.loadingTime - (timestamp - Date.parse(ticket.train.stationArrival!));
     }
 
     ticket.train = moveTrain(ticket.train, links, timestamp);
@@ -147,10 +159,10 @@ const moveTrain = (train: App.Train, links: App.Link[], t: number): App.Train =>
     train.link = links.filter((l) => l.dest.route == train.schedule!.origin.route && l.origin.route === train.schedule!.origin.route).find(p)!;
 
     train.station = train.schedule.direction === App.TrainDirection.INBOUND ? train.link.origin : train.link.dest;
-    train.stationArrival = new Date(t);
+    train.stationArrival = new Date(t).toISOString();
   } else {
     train.station = null;
-    train.stationDep = new Date(t);
+    train.stationDep = new Date(t).toISOString();
   }
 
   return train;

@@ -3,6 +3,8 @@ package com.mmyron.db363.entitiy;
 import java.io.Serializable;
 import java.util.Objects;
 
+import com.mmyron.db363.dto.StationVM;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.JoinColumn;
@@ -20,6 +22,11 @@ public class StationPK implements Serializable {
 	public StationPK(String name, String route) {
 		this.name = name;
 		this.route = route;
+	}
+	
+	public StationPK(StationVM station) {
+		this.name = station.getName();
+		this.route = station.getRoute();
 	}
 
 	@Override

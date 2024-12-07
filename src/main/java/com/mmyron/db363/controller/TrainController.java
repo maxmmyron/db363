@@ -26,10 +26,12 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.mmyron.db363.dto.ScheduleVM;
 import com.mmyron.db363.dto.TrainVM;
 import com.mmyron.db363.entitiy.Link;
+import com.mmyron.db363.entitiy.LinkPK;
 import com.mmyron.db363.entitiy.Schedule;
 import com.mmyron.db363.entitiy.Station;
 import com.mmyron.db363.entitiy.StationPK;
 import com.mmyron.db363.entitiy.Train;
+import com.mmyron.db363.repo.LinkRepo;
 import com.mmyron.db363.repo.ScheduleRepo;
 import com.mmyron.db363.repo.StationRepo;
 import com.mmyron.db363.repo.TrainRepo;
@@ -46,6 +48,8 @@ public class TrainController {
 	private StationRepo stationRepo;
 	@Autowired
 	private ScheduleRepo schedRepo;
+	@Autowired
+	private LinkRepo linkRepo;
 	
 	// create
 	
@@ -86,42 +90,40 @@ public class TrainController {
 	
 	// update
 	
-	@PutMapping(path="/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PutMapping(path="/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TrainVM updateTrain(@PathVariable Long id, @RequestBody TrainVM train) {
+		System.out.println(train);
+		
 		Train t = trainRepo.findById(id).orElse(null);
 		if(t == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error updating train: Train " + id + " does not exist.");
 		
 		Station s;
-		if(train.getStation() == null) s = t.getStation();
+		if(train.getStation() == null) s = null; 
 		else s = stationRepo.findById(new StationPK(train.getStation().getName(), train.getStation().getRoute())).orElse(null);
 		
 		Schedule sch = train.getSchedule().getId() == null ? t.getSchedule() : schedRepo.findById(train.getSchedule().getId()).orElse(null);
+		Link l = linkRepo.findById(new LinkPK(new StationPK(train.getLink().getOrigin()), new StationPK(train.getLink().getDest()))).orElse(null);
 		
-		if(s == null && train.getStation() != null || sch == null && train.getSchedule() != null) {
-			String err = "Error creating train: \n";
+		if(s == null && train.getStation() != null || sch == null && train.getSchedule() != null || l == null) {
+			String err = "Error updating train: \n";
 			if(s == null) err += "\t- Station" + train.getStation().getName() + " does not exist for route " + train.getStation().getRoute() + "\n";
 			if(sch == null) err += "\t- No schedule found with id " + train.getSchedule().getId() + "\n";
+			if(l == null) err += "\t - Link could not be found from Train DTO";
 			
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, err);
 		}
 		
 		t.setSchedule(sch);
 		t.setStation(s);
-		
-		if(train.getLink() != null) {
-			StationPK o = new StationPK(train.getLink().getOrigin(), train.getLink().getRoute());
-			StationPK d = new StationPK(train.getLink().getDest(), train.getLink().getRoute());
-			Link l = new Link(o, d, train.getLink().getDuration(), train.getLink().getDistance());
-			t.setLink(l);
-		}
-		
+		t.setLink(l);
 		t.setSchedDep(train.getSchedDep() == null ? t.getSchedDep() : train.getSchedDep());
-		
 		t.setStationArrival(train.getStationArrival() == null ? t.getStationArrival() : train.getStationArrival());
 		t.setStationDep(train.getStationDep() == null ? t.getStationDep() : train.getStationDep());
 		t.setStatus(train.getStatus() == null ? t.getStatus() : train.getStatus());
 		
-		return new TrainVM(trainRepo.save(t));
+		t = trainRepo.save(t);
+		System.out.println(t);
+		return new TrainVM(t);
 	}
 	
 	// delete

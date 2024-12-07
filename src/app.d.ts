@@ -33,7 +33,7 @@ declare global {
 			train: App.Train;
 			origin: App.Station;
 			dest: App.Station;
-			departure: Date;
+			departure: string;
 			direction: App.TrainDirection;
 		};
 
@@ -41,10 +41,10 @@ declare global {
 			id: number;
 			schedule: App.Schedule | null;
 			station: App.Station | null;
-			link: App.Link | null;
-			schedDep: Date | null;
-			stationArrival: Date | null;
-			stationDep: Date | null;
+			link: App.Link;
+			schedDep: string | null;
+			stationArrival: string | null;
+			stationDep: string | null;
 			status: string;
 		};
 

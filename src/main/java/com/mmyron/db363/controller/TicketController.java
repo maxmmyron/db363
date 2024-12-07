@@ -53,10 +53,10 @@ public class TicketController {
 	private TrainRepo trainRepo;
 	@Autowired
 	private StationRepo stationRepo;
-	
+
 	// create
-	
-	@PostMapping(path="/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+
+	@PostMapping(path="/create", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TicketVM addTicket(@RequestBody TicketVM ticket) {
 		Passenger p = passengerRepo.findById(ticket.getPassenger().getId()).orElse(null);
 		Train t = trainRepo.findById(ticket.getTrain().getId()).orElse(null);
@@ -64,19 +64,19 @@ public class TicketController {
 		Station d = stationRepo.findById(new StationPK(ticket.getDest().getName(), ticket.getDest().getRoute())).orElse(null);
 		TrainDirection tDir = null;
 		LocalDateTime time = null;
-	
+
 		try {
 			tDir = ticket.getDirection();
 		} catch(IllegalArgumentException e) {
 			tDir = null;
 		}
-		
+
 		try {
 			time = ticket.getDeparture();
 		} catch (DateTimeParseException e) {
 			time = null;
 		}
-		
+
 		if(!Stream.of(p, t, o, d, tDir, time).allMatch((x) -> x != null)) {
 			String err = "Error creating ticket: \n";
 			if(p == null) err += "\t- Passenger " + ticket.getPassenger().getId() + "does not exist\n";
@@ -85,15 +85,15 @@ public class TicketController {
 			if(d == null) err += "\t- Station" + ticket.getDest().getName() + " does not exist on route " + ticket.getDest().getRoute() + "\n";
 			if(tDir == null) err += "\t- Direction is invalid (must be INBOUND or OUTBOUND)";
 			if(time == null) err += "\t- Could not parse time " + ticket.getDeparture() +"\n";
-			
+
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, err);
 		}
-				
+
 		return new TicketVM(ticketRepo.save(new Ticket(p, t, o, d, time, tDir)));
 	}
-	
+
 	// read
-	
+
 	@GetMapping(path="/")
 	public @ResponseBody Iterable<TicketVM> getTickets() {
 		List<TicketVM> tickets = new ArrayList<>();
@@ -102,40 +102,40 @@ public class TicketController {
 		}
 		return tickets;
 	}
-	
+
 	@GetMapping(path="/{id}")
 	public @ResponseBody TicketVM getTicket(@PathVariable Long id) {
 		Optional<Ticket> t = ticketRepo.findById(id);
 		if(t.isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No ticket found with ID " + id);
 		return new TicketVM(t.get());
 	}
-	
+
 	// update
 
-	@PutMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TicketVM updateTicket(@PathVariable Long id, @RequestBody TicketVM ticket) {
 		Ticket tx = ticketRepo.findById(id).orElse(null);
 		if(tx == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error updating ticket: No ticket found with ID " + id);
-		
+
 		Passenger p = ticket.getPassenger() == null ? tx.getPassenger() : passengerRepo.findById(ticket.getPassenger().getId()).orElse(null);
 		Train t = ticket.getTrain() == null ? tx.getTrain() : trainRepo.findById(ticket.getTrain().getId()).orElse(null);
 		Station o = ticket.getOrigin() == null ? tx.getOrigin() : stationRepo.findById(new StationPK(ticket.getOrigin().getName(), ticket.getOrigin().getRoute())).orElse(null);
 		Station d = ticket.getDest() == null ? tx.getDest() : stationRepo.findById(new StationPK(ticket.getDest().getName(), ticket.getDest().getRoute())).orElse(null);
 		TrainDirection tDir = null;
 		LocalDateTime time = null;
-	
+
 		try {
 			tDir = ticket.getDirection() == null ? tx.getDirection() : ticket.getDirection();
 		} catch(IllegalArgumentException e) {
 			tDir = null;
 		}
-		
+
 		try {
 			time = ticket.getDeparture() == null ? tx.getDeparture() : ticket.getDeparture();
 		} catch (DateTimeParseException e) {
 			time = null;
 		}
-		
+
 		if(!Stream.of(p, t, o, d, tDir, time).allMatch((x) -> x != null)) {
 			String err = "Error creating ticket: \n";
 			if(p == null) err += "\t- Passenger " + ticket.getPassenger().getId() + "does not exist\n";
@@ -144,24 +144,24 @@ public class TicketController {
 			if(d == null) err += "\t- Station" + ticket.getDest().getName() + " does not exist on route " + ticket.getDest().getRoute() + "\n";
 			if(tDir == null) err += "\t- Direction is invalid (must be INBOUND or OUTBOUND)";
 			if(time == null) err += "\t- Could not parse time " + ticket.getDeparture() +"\n";
-			
+
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, err);
 		}
-	
+
 		// special validation case: train route must eq. station routes
 		if(!ticket.getTrain().getSchedule().getOrigin().getRoute().equals(ticket.getOrigin().getRoute())) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error updating ticket: Train on route" + ticket.getTrain().getSchedule().getOrigin().getRoute() + " cannot be assigned to ticket with route " + ticket.getOrigin().getRoute());
-		
+
 		tx.setId(new TicketPK(p.getId(), t.getId()));
 		tx.setOrigin(o);
 		tx.setDest(d);
 		tx.setDeparture(time);
 		tx.setDirection(tDir);
-		
+
 		return new TicketVM(ticketRepo.save(tx));
-	} 
-	
+	}
+
 	// delete
-	
+
 	@DeleteMapping("/{id}")
 	public @ResponseBody boolean deleteTicket(@PathVariable Long id) {
 		Optional<Ticket> t = ticketRepo.findById(id);

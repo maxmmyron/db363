@@ -87,9 +87,15 @@ public class Link {
 	@JsonIgnore
 	private Set<Train> trains = new HashSet<>();
 
-	public Link(StationPK origin, StationPK dest, Integer duration, Integer distance) {
-		id = new LinkPK(origin, dest);
+	public Link(Station origin, Station dest, Integer duration, Integer distance) {
+		this.origin = origin;
+		this.dest = dest;
 		this.duration = duration;
 		this.distance = distance;
+	}
+	
+	@Override
+	public String toString() {
+		return "{" + origin == null ? "NULL" : origin.toString() + ", " + dest == null ? "NULL" : dest.toString() + "}"; 
 	}
 }
