@@ -143,18 +143,18 @@ const moveTrain = async (train: App.Train, links: App.Link[], t: number): Promis
     // outbound trains move along link from to dest; next link is one whose origin === ticket.origin
 
     train.station = train.schedule.direction === "INBOUND" ? train.link.origin : train.link.dest;
-    console.log(`moving to station ${train.station.name}`)
+    train.status = "BOARDING";
 
-    if(train.station.name === train.schedule.dest.name) return await reverseTrain(train, t);
+    // if we're at final schedule station, move train
+    if(train.station.name === (train.schedule.direction === "INBOUND" ? train.schedule.origin : train.schedule.dest).name) return await reverseTrain(train, t);
 
     const p = train.schedule.direction === "INBOUND" ? ((l: App.Link) => l.dest.name === train.link.origin.name) : ((l: App.Link) => l.origin.name === train.link.dest.name);
     train.link = links.filter((l) => l.dest.route == train.schedule!.origin.route && l.origin.route === train.schedule!.origin.route).find(p)!;
-    console.log(`new link: (${train.link.origin.name} -> ${train.link.dest.name})`);
     train.stationArrival = new Date(t).toISOString();
   } else {
-    console.log(`moving out of station ${train.station.name} and into transit`);
     train.station = null;
     train.stationDep = new Date(t).toISOString();
+    train.status = "IN TRANSIT";
   }
 
   return train;

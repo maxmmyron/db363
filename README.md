@@ -61,10 +61,14 @@ An individual train that may be given a schedule.
 - M:1 w/ Schedule (A train is assigned one schedule; one schedule may have many trains assigned to it.)
 
 **Functional dependencies:**
-TODO:
+
+$$
+R(\text{id}, \text{schedule\textunderscore id}, \text{schedule\textunderscore departure}, \text{station\textunderscore name}, \text{station\textunderscore route}, \text{station\textunderscore arrival}, \text{station\textunderscore departure}, \text{link\textunderscore origin\textunderscore name}, \text{link\textunderscore origin\textunderscore route}, \text{link\textunderscore dest\textunderscore name}, \text{link\textunderscore dest\textunderscore route}, \text{train\textunderscore status})\\\
+\text{id} \rarr (\text{schedule\textunderscore id}, \text{schedule\textunderscore departure}, \text{station\textunderscore name}, \text{station\textunderscore route}, \text{station\textunderscore arrival}, \text{station\textunderscore departure}, \text{link\textunderscore origin\textunderscore name}, \text{link\textunderscore origin\textunderscore route}, \text{link\textunderscore dest\textunderscore name}, \text{link\textunderscore dest\textunderscore route}, \text{train\textunderscore status})
+$$
 
 **Demonstration of normal form:**
-TODO:
+The table is in 3NF because each non-key column is directly tied to the PK, and there are no transitive dependencies.
 
 ---
 
@@ -79,11 +83,16 @@ _NOTE: Route is described in this table so we can associate a station with multi
 | train_route  | String | PRI | The route assigned to this station (see below) |
 | loading_time | Number |     | How long the train is at the station for       |
 
+$$
+R(\text{name}, \text{train\textunderscore route}, \text{loading\textunderscore time})\\\
+(\text{name}, \text{train\textunderscore route}) \rarr (\text{loading\textunderscore time})
+$$
+
 **Functional dependencies:**
 TODO:
 
 **Demonstration of normal form:**
-TODO:
+The table is in 3NF because each non-key column is directly tied to the PK, and there are no transitive dependencies.
 
 ---
 
@@ -103,10 +112,14 @@ _NOTE: Primary key is composed of two composite foreign keys (one for origin sta
 | distance     | NUmber       |     | The distance between the two stations                   |
 
 **Functional dependencies:**
-TODO:
+
+$$
+R(\text{origin\textunderscore name},\text{origin\textunderscore route},\text{dest\textunderscore name},\text{dest\textunderscore route},\text{duration},\text{distance})\\\
+(\text{origin\textunderscore name},\text{origin\textunderscore route},\text{dest\textunderscore name},\text{dest\textunderscore route}) \rarr (\text{duration},\text{distance})
+$$
 
 **Demonstration of normal form:**
-TODO:
+The table is in 3NF because each non-key column is directly tied to the PK, and there are no transitive dependencies.
 
 ---
 
@@ -124,10 +137,14 @@ A schedule that specifies a route a train may run along.
 | dir          | TrainDirection |     | direction of train |
 
 **Functional dependencies:**
-TODO:
+
+$$
+R(\text{id}, \text{origin\textunderscore name},\text{origin\textunderscore route},\text{dest\textunderscore name},\text{dest\textunderscore route},\text{dir})\\\
+(\text{id}) \rarr (\text{origin\textunderscore name},\text{origin\textunderscore route},\text{dest\textunderscore name},\text{dest\textunderscore route},\text{dir})
+$$
 
 **Demonstration of normal form:**
-TODO:
+The table is in 3NF because each non-key column is directly tied to the PK, and there are no transitive dependencies.
 
 ---
 
@@ -152,10 +169,14 @@ _NOTE: More complex trips (like those with interchanges) require more than one t
 - M:1 w/ Train (Many tickets may specify a single train; one train may have many tickets)
 
 **Functional dependencies:**
-TODO:
+
+$$
+R(\text{passenger\textunderscore id},\text{train\textunderscore id},\text{origin\textunderscore name},\text{origin\textunderscore route},\text{dest\textunderscore name},\text{dest\textunderscore route},\text{departure})\\\
+(\text{passenger\textunderscore id},\text{train\textunderscore id}) \rarr (\text{origin\textunderscore name},\text{origin\textunderscore route},\text{dest\textunderscore name},\text{dest\textunderscore route},\text{departure})
+$$
 
 **Demonstration of normal form:**
-TODO:
+The table is in 3NF because each non-key column is directly tied to the PK, and there are no transitive dependencies.
 
 ---
 
@@ -165,7 +186,7 @@ A passenger. May have a ticket for a route.
 
 | Name       | Type   | Description |
 | ---------- | ------ | ----------- |
-| id         |        |             |
+| id         | PRI    |             |
 | first_name | String |             |
 | last_name  | String |             |
 
@@ -174,10 +195,14 @@ A passenger. May have a ticket for a route.
 - On Deletion: Any associated ticket should be deleted.
 
 **Functional dependencies:**
-TODO:
+
+$$
+R(\text{id}, \text{first\textunderscore name}, \text{last\textunderscore name})\\\
+(\text{id}) \rarr (\text{first\textunderscore name}, \text{last\textunderscore name})
+$$
 
 **Demonstration of normal form:**
-TODO:
+The table is in 3NF because each non-key column is directly tied to the PK, and there are no transitive dependencies.
 
 ---
 
@@ -524,14 +549,15 @@ Occurs during non-standard shutdown of back end. Requires manual kill of process
 
 # TODO:
 
-- [ ] normal form
-- [ ] functional dependencies
+- [x] normal form
+- [x] functional dependencies
+  - [ ] more rigid proof of FDs
 - [ ] convenient interface to manage passengers and tickets
 - [x] reverse trains when at end of schedule: move to reverse schedule, update direction, and set departure for 10 mins later
 - [x] save time in localstorage when leaving page
 - [x] update API PUT requests to use JSON body format
-- [ ] actually use train status
-- [ ] fix endpoints mapping in front end
+- [x] actually use train status
+- [x] fix endpoints mapping in front end
 
 ```
 
