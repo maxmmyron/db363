@@ -558,7 +558,3 @@ Occurs during non-standard shutdown of back end. Requires manual kill of process
 - [x] update API PUT requests to use JSON body format
 - [x] actually use train status
 - [x] fix endpoints mapping in front end
-
-```
-
-```
