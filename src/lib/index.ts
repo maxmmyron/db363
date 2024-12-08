@@ -122,8 +122,6 @@ export const getTicketTransitTime = async (ticket: App.Ticket, timestamp: number
 /**
  * Moves a train along scheduled route
  *
- * TODO: what do if train at scheduled end of route???
- *
  * @param train The train to move
  * @param schedule The schedule the train is on
  * @param links A list of all links. Is filtered
