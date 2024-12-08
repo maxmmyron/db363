@@ -9,8 +9,21 @@
 ## Requirements
 
 - mysql server running on 3306
+- node.js (v18.13 or above)
 
-## Overview of setup:
+## setup:
+
+1. Clone package
+
+2. `npm install`
+
+3. start MySQL server (_on port 3306_)
+
+4. start DB back-end (at `src/main/java/com/mmyron/db363/Db363Application.java`)
+
+5. start front end (w/ `npm run dev -- --open`)
+
+---
 
 On first load, Spring will look for `./src/main/resources/init.sql` which will set up the initial database content:
 
@@ -430,6 +443,7 @@ Slugs: `id: string`
 - [x] CRUD ops using front end
 - [x] cascades to remove redundant data (e.g. remove ticket if schedule removed)
 - [x] timer to automatically update table contents (e.g. moving train from station to station).
+- [x] visualization to see trains move
 
 ### Common Operations and queries
 
@@ -442,9 +456,9 @@ Returns the number of milliseconds before the ticket's associated train reaches 
 Updates each trains status based on a few rules:
 
 - If the train has no schedule: continue.
-- If the train is in transit, and theLocalDateTimein transit > link's transit time:
+- If the train is in transit, and time in transit > link's transit time:
   - move train to next station, update link and arrival time
-- If the train is at a station, and theLocalDateTimeat station >= station's loading time:
+- If the train is at a station, and time at station >= station's loading time:
   - move train to transit, update departure time.
 
 #### `async getTicketTransitTime(ticket: Ticket, timestamp: number) => Promise<number>`
@@ -461,3 +475,13 @@ Occurs during non-standard shutdown of back end. Requires manual kill of process
 
 - `netstat -ano | findstr 5133`; note PID of task(s) using port
 - `taskkill /F /PID <pid>`
+
+# TODO:
+
+- [ ] normal form
+- [ ] functional dependencies
+- [ ] convenient interface to manage passengers and tickets
+- [x] reverse trains when at end of schedule: move to reverse schedule, update direction, and set departure for 10 mins later
+- [ ] save time in localstorage when leaving page
+- [ ] update API PUT requests to use JSON body format
+- [ ] actually use train status

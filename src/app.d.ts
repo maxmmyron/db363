@@ -48,7 +48,7 @@ declare global {
 			status: string;
 		};
 
-		enum TrainDirection { "INBOUND", "OUTBOUND" };
+		enum TrainDirection { INBOUND = "INBOUND", OUTBOUND = "OUTBOUND" };
 
 		// interface Error {}
 		// interface Locals {}
