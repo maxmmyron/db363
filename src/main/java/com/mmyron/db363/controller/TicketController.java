@@ -103,19 +103,19 @@ public class TicketController {
 		return tickets;
 	}
 
-	@GetMapping(path="/{id}")
-	public @ResponseBody TicketVM getTicket(@PathVariable Long id) {
-		Optional<Ticket> t = ticketRepo.findById(id);
-		if(t.isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No ticket found with ID " + id);
+	@GetMapping()
+	public @ResponseBody TicketVM getTicket(@RequestParam(name="train") Long train, @RequestParam(name="passenger") Long passenger) {
+		Optional<Ticket> t = ticketRepo.findById(new TicketPK(train, passenger));
+		if(t.isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No ticket found with ID (" + train + ", " + passenger + ")");
 		return new TicketVM(t.get());
 	}
 
 	// update
 
-	@PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TicketVM updateTicket(@PathVariable Long id, @RequestBody TicketVM ticket) {
-		Ticket tx = ticketRepo.findById(id).orElse(null);
-		if(tx == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error updating ticket: No ticket found with ID " + id);
+	@PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody TicketVM updateTicket(@RequestParam(name="train") Long train, @RequestParam(name="passenger") Long passenger, @RequestBody TicketVM ticket) {
+		Ticket tx = ticketRepo.findById(new TicketPK(train, passenger)).orElse(null);
+		if(tx == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error updating ticket: No ticket found with ID (" + train + ", " + passenger + ")");
 
 		Passenger p = ticket.getPassenger() == null ? tx.getPassenger() : passengerRepo.findById(ticket.getPassenger().getId()).orElse(null);
 		Train t = ticket.getTrain() == null ? tx.getTrain() : trainRepo.findById(ticket.getTrain().getId()).orElse(null);
@@ -162,11 +162,11 @@ public class TicketController {
 
 	// delete
 
-	@DeleteMapping("/{id}")
-	public @ResponseBody boolean deleteTicket(@PathVariable Long id) {
-		Optional<Ticket> t = ticketRepo.findById(id);
-		if(t.isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No ticket found with ID " + id);
-		ticketRepo.delete(t.get());
+	@DeleteMapping()
+	public @ResponseBody boolean deleteTicket(@RequestParam(name="train") Long train, @RequestParam(name="passenger") Long passenger) {
+		Ticket tx = ticketRepo.findById(new TicketPK(train, passenger)).orElse(null);
+		if(tx == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error deleting ticket: No ticket found with ID (" + train + ", " + passenger + ")");
+		ticketRepo.delete(tx);
 		return true;
 	}
 }

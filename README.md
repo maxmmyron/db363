@@ -183,6 +183,10 @@ TODO:
 
 ## API Design
 
+Each table within the `railway` database has a collection of endpoint reachable at `/api/{table_name}`. In general, each of these tables supports CRUD ops via different request methods @ these endpoints (save for a few).
+If an entity has a simple primary key (e.g train, which has a single numerical ID), GET, PUT, and DELETE requests can be specified for a single entity w/ the endpoint `api/{table}/{id}`.
+If an entity has a composite primary key (e.g. station, whose key is `route` + `name`), then the same methods can be specified for a single entity with search params: `api/{table}?{param1}={val}&{param2}=val...`
+
 ### `/api/links`
 
 #### `GET /api/links`
@@ -192,16 +196,13 @@ Returns all links.
 Slugs: none
 Search params: none
 
-#### `GET /api/links/{route}`
+#### `GET /api/links`
 
 Returns a single link by route, origin station, and destination station.
 
-Slugs:
-
-- `route: string`
-
 Search params:
 
+- `route: string`
 - `origin: string`
 - `dest: string`
 
@@ -219,10 +220,14 @@ Returns all passengers.
 
 Creates a new passenger.
 
-Search params:
+Request body:
 
-- `first_name: string`
-- `last_name: string`
+```json
+{
+  "first_name": string,
+  "last_name": string,
+}
+```
 
 ---
 
@@ -240,10 +245,14 @@ Updates a passenger.
 
 Slugs: `id: string`
 
-Search params:
+Request body:
 
-- `first_name: string`
-- `last_name: string`
+```json
+{
+  "first_name": string,
+  "last_name": string,
+}
+```
 
 ---
 
@@ -267,12 +276,16 @@ Returns all schedules.
 
 Creates a new schedule.
 
-Search Params:
+Request body:
 
-- `origin: string`
-- `dest: string`
-- `route: string`
-- `dir: INBOUND | OUTBOUND`
+```json
+{
+  "id": number,
+  "origin": Station,
+  "dest": Station,
+  "direction": INBOUND | OUTBOUND,
+}
+```
 
 ---
 
@@ -290,12 +303,16 @@ Updates a schedule.
 
 Slugs: `id: string`
 
-Search Params:
+Request body:
 
-- `origin: string`
-- `dest: string`
-- `route: string`
-- `dir: INBOUND | OUTBOUND`
+```json
+{
+  "id": number,
+  "origin": Station,
+  "dest": Station,
+  "direction": INBOUND | OUTBOUND,
+}
+```
 
 ---
 
@@ -315,11 +332,11 @@ Returns all stations.
 
 ---
 
-#### `GET /api/stations/{route}/{name}`
+#### `GET /api/stations`
 
 Returns a single station by route and name.
 
-Slugs:
+Search params:
 
 - `route: string`
 - `name: string`
@@ -328,7 +345,7 @@ Slugs:
 
 ### `/api/tickets`
 
-#### `GET /api/tickets`
+#### `GET /api/tickets/`
 
 Returns all tickets.
 
@@ -338,49 +355,64 @@ Returns all tickets.
 
 Creates a new ticket.
 
-Search Params:
+Request body:
 
-- `passenger: long`
-- `train: long`
-- `route: string`
-- `origin: string`
-- `dest: string`
-- `departure: string`
-- `dir: INBOUND | OUTBOUND`
+```json
+{
+  "passenger": Passenger,
+  "train": Train,
+  "origin": Station,
+  "dest": Station,
+  "departure": Time,
+  "direction": INBOUND | OUTBOUND,
+}
+```
 
 ---
 
-#### `GET /api/tickets/{id}`
+#### `GET /api/tickets`
 
 Retrieves a single ticket by ID.
 
-Slugs: `id: string`
+Search params:
+
+- `train: number`
+- `passenger: number`
 
 ---
 
-#### `PUT /api/tickets/{id}`
+#### `PUT /api/tickets`
 
 Updates a ticket.
 
-Slugs: `id: string`
+Search params:
 
-Search Params:
+- `train: number`
+- `passenger: number`
 
-- `passenger: long`
-- `train: long`
-- `route: string`
-- `origin: string`
-- `dest: string`
-- `departure: string`
-- `dir: INBOUND | OUTBOUND`
+Request body:
+
+```json
+{
+  "passenger": Passenger,
+  "train": Train,
+  "origin": Station,
+  "dest": Station,
+  "departure": Time,
+  "direction": INBOUND | OUTBOUND,
+}
+```
 
 ---
 
-#### `DELETE /api/tickets/{id}`
+#### `DELETE /api/tickets`
 
 Deletes a ticket.
 
-Slugs: `id: string`
+Search params:
+
+- `train: number`
+- `passenger: number`
 
 ---
 
@@ -396,12 +428,19 @@ Returns all trains.
 
 Creates a new train.
 
-Search Params:
+Request body:
 
-- `route: string`
-- `origin: string`
-- `status: string`
-- `schedule: long`
+```json
+{
+  "station": Station,
+  "link": Link,
+  "stationDep": Time,
+  "stationArrival": Time,
+  "schedule": Schedule,
+  "schedDep": Time,
+  "status": string,
+}
+```
 
 ---
 
@@ -419,12 +458,19 @@ Updates a train.
 
 Slugs: `id: string`
 
-Search Params:
+Request body:
 
-- `route: string`
-- `origin: string`
-- `status: string`
-- `schedule: long`
+```json
+{
+  "station": Station,
+  "link": Link,
+  "stationDep": Time,
+  "stationArrival": Time,
+  "schedule": Schedule,
+  "schedDep": Time,
+  "status": string,
+}
+```
 
 ---
 
@@ -482,6 +528,11 @@ Occurs during non-standard shutdown of back end. Requires manual kill of process
 - [ ] functional dependencies
 - [ ] convenient interface to manage passengers and tickets
 - [x] reverse trains when at end of schedule: move to reverse schedule, update direction, and set departure for 10 mins later
-- [ ] save time in localstorage when leaving page
-- [ ] update API PUT requests to use JSON body format
+- [x] save time in localstorage when leaving page
+- [x] update API PUT requests to use JSON body format
 - [ ] actually use train status
+- [ ] fix endpoints mapping in front end
+
+```
+
+```

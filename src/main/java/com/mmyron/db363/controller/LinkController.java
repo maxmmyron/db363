@@ -39,8 +39,8 @@ public class LinkController {
 		return links;
 	}
 	
-	@GetMapping(path="/{route}")
-	public @ResponseBody LinkVM getLink(@PathVariable String route, @RequestParam(name = "origin") String origin, @RequestParam(name="dest") String dest) {
+	@GetMapping()
+	public @ResponseBody LinkVM getLink(@RequestParam(name="route") String route, @RequestParam(name = "origin") String origin, @RequestParam(name="dest") String dest) {
 		StationPK o = new StationPK(origin, route);
 		StationPK d = new StationPK(dest, route);
 		Optional<Link> l = linkRepo.findById(new LinkPK(o, d));
