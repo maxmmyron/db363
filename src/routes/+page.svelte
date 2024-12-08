@@ -2,15 +2,15 @@
   import CrudPanel from "$lib/CRUDPanel.svelte";
   import { tick } from "$lib/index";
   import type { PageData } from "./$types";
+  import { time } from "$lib/stores";
 
   let { data }: { data: PageData } = $props();
 
   let d = $state(data);
   $effect(() => console.log(d));
 
-  let time = $state(new Date("2024-01-01T08:00:00+00:00").getTime());
   $effect(() => {
-    tick(time).then(async () => {
+    tick($time).then(async () => {
       console.log("tick complete... updating trains");
       let res = await fetch("http://localhost:5133/api/trains/");
       d.trains = await res.json();
@@ -154,7 +154,7 @@
 
   let paused = $state(true);
   setInterval(() => {
-    if (!paused) time += 1000 * 60;
+    if (!paused) $time += 1000 * 60;
   }, 1000);
 </script>
 
@@ -165,13 +165,13 @@
 <section>
   {#key time}
     <p class="">
-      time: {new Date(time).toLocaleString("en-US", { timeZone: "UTC" })}
+      time: {new Date($time).toLocaleString("en-US", { timeZone: "UTC" })}
     </p>
   {/key}
   <button onclick={() => (paused = !paused)} class="border"
     >{paused ? "unpause" : "pause"}</button
   >
-  <button onclick={() => (time += 1000 * 60)} class="border">tick</button>
+  <button onclick={() => ($time += 1000 * 60)} class="border">tick</button>
 
   {#if ziplines}
     {#each Object.entries(ziplines) as [line, { parts, color }]}
