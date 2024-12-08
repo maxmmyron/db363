@@ -124,32 +124,32 @@ INSERT INTO Link (origin_name, origin_route, dest_name, dest_route, duration, di
   ("School District", "Line 4", "Park & Ride", "Line 4", 10, 10);
 
 INSERT INTO Schedule (id, origin_name, origin_route, dest_name, dest_route, direction) VALUES
-  (1, 'Waterfront', 'Line 1', 'Museum', 'Line 1', 'INBOUND');
---   (2, 'Museum', 'Line 1', 'Waterfront', 'Line 1', 'OUTBOUND'),
---   (3, 'Airport Express', 'Line 2', 'Beach Terminal', 'Line 2', 'INBOUND'),
---   (4, 'Beach Terminal', 'Line 2', 'Airport Express', 'Line 2', 'OUTBOUND'),
---   (5, 'North Station', 'Line 3', 'Food Court', 'Line 3', 'INBOUND'),
---   (6, 'Food Court', 'Line 3', 'North Station', 'Line 3', 'OUTBOUND'),
---   (7, 'West Terminal', 'Line 4', 'Park & Ride', 'Line 4', 'INBOUND'),
---   (8, 'Park & Ride', 'Line 4', 'West Terminal', 'Line 4', 'OUTBOUND');
+  (1, 'Museum', 'Line 1', 'Waterfront', 'Line 1', 'INBOUND'),
+  (2, 'Waterfront', 'Line 1', 'Museum', 'Line 1', 'OUTBOUND'),
+  (3, 'Beach Terminal', 'Line 2', 'Airport Express', 'Line 2', 'INBOUND'),
+  (4, 'Airport Express', 'Line 2', 'Beach Terminal', 'Line 2', 'OUTBOUND'),
+  (5, 'Shopping Plaza', 'Line 3', 'North Station', 'Line 3', 'INBOUND'),
+  (6, 'North Station', 'Line 3', 'Shopping Plaza', 'Line 3', 'OUTBOUND'),
+  (7, 'Park & Ride', 'Line 4', 'West Terminal', 'Line 4', 'INBOUND'),
+  (8, 'West Terminal', 'Line 4', 'Park & Ride', 'Line 4', 'OUTBOUND');
 
 INSERT INTO Train (schedule_id, schedule_departure, station_name, station_route, station_arrival, station_departure, link_origin_name, link_origin_route, link_dest_name, link_dest_route, train_status) VALUES
-((SELECT id FROM Schedule WHERE id = 1), '2024-01-01 08:00:00', 'Museum', 'Line 1', '2024-01-01 08:00:00', NULL, 'Library', 'Line 1', 'Museum', 'Line 1', 'Boarding');
--- ((SELECT id FROM Schedule WHERE id = 1), '2024-01-01 09:00:00', 'Museum', 'Line 1', '2024-01-01 09:00:00', NULL, 'Library', 'Line 1', 'Museum', 'Line 1', 'Boarding'),
--- ((SELECT id FROM Schedule WHERE id = 2), '2024-01-01 08:00:00', 'Waterfront', 'Line 1', '2024-01-01 08:00:00', NULL, 'Waterfront', 'Line 1', 'City Hall', 'Line 1', 'Boarding'),
--- ((SELECT id FROM Schedule WHERE id = 2), '2024-01-01 09:00:00', 'Waterfront', 'Line 1', '2024-01-01 09:00:00', NULL, 'Waterfront', 'Line 1', 'City Hall', 'Line 1', 'Boarding'),
--- ((SELECT id FROM Schedule WHERE id = 3), '2024-01-01 08:00:00', 'Beach Terminal', 'Line 2', '2024-01-01 08:00:00', NULL, 'Ocean View', 'Line 2', 'Beach Terminal', 'Line 2', 'Boarding'),
--- ((SELECT id FROM Schedule WHERE id = 4), '2024-01-01 09:00:00', 'Beach Terminal', 'Line 2', '2024-01-01 09:00:00', NULL, 'Ocean View', 'Line 2', 'Beach Terminal', 'Line 2', 'Boarding'),
--- ((SELECT id FROM Schedule WHERE id = 4), '2024-01-01 08:00:00', 'Airport Express', 'Line 2', '2024-01-01 08:00:00', NULL, 'Airport Express', 'Line 2', 'Business District', 'Line 2', 'Boarding'),
--- ((SELECT id FROM Schedule WHERE id = 4), '2024-01-01 09:00:00', 'Airport Express', 'Line 2', '2024-01-01 09:00:00', NULL, 'Airport Express', 'Line 2', 'Business District', 'Line 2', 'Boarding'),
--- ((SELECT id FROM Schedule WHERE id = 5), '2024-01-01 08:00:00', 'Shopping Plaza', 'Line 3', '2024-01-01 08:00:00', NULL, 'Food Court', 'Line 3', 'Shopping Plaza', 'Line 3', 'Boarding'),
--- ((SELECT id FROM Schedule WHERE id = 5), '2024-01-01 09:00:00', 'Shopping Plaza', 'Line 3', '2024-01-01 09:00:00', NULL, 'Food Court', 'Line 3', 'Shopping Plaza', 'Line 3', 'Boarding'),
--- ((SELECT id FROM Schedule WHERE id = 6), '2024-01-01 08:00:00', 'North Station', 'Line 3', '2024-01-01 08:00:00', NULL, 'North Station', 'Line 3', 'Science Park', 'Line 3', 'Boarding'),
--- ((SELECT id FROM Schedule WHERE id = 6), '2024-01-01 09:00:00', 'North Station', 'Line 3', '2024-01-01 09:00:00', NULL, 'North Station', 'Line 3', 'Science Park', 'Line 3', 'Boarding'),
--- ((SELECT id FROM Schedule WHERE id = 7), '2024-01-01 08:00:00', 'Park & Ride', 'Line 4', '2024-01-01 08:00:00', NULL, 'School District', 'Line 4', 'Park & Ride', 'Line 4', 'Boarding'),
--- ((SELECT id FROM Schedule WHERE id = 7), '2024-01-01 09:00:00', 'Park & Ride', 'Line 4', '2024-01-01 09:00:00', NULL, 'School District', 'Line 4', 'Park & Ride', 'Line 4', 'Boarding'),
--- ((SELECT id FROM Schedule WHERE id = 8), '2024-01-01 08:00:00', 'West Terminal', 'Line 4', '2024-01-01 08:00:00', NULL, 'West Terminal', 'Line 4', 'Industrial Park', 'Line 4', 'Boarding'),
--- ((SELECT id FROM Schedule WHERE id = 8), '2024-01-01 09:00:00', 'West Terminal', 'Line 4', '2024-01-01 09:00:00', NULL, 'West Terminal', 'Line 4', 'Industrial Park', 'Line 4', 'Boarding');
+  ((SELECT id FROM Schedule WHERE id = 1), '2024-01-01 08:00:00', 'Museum', 'Line 1', '2024-01-01 08:00:00', NULL, 'Library', 'Line 1', 'Museum', 'Line 1', 'BOARDING'),
+  ((SELECT id FROM Schedule WHERE id = 1), '2024-01-01 09:00:00', 'Museum', 'Line 1', '2024-01-01 09:00:00', NULL, 'Library', 'Line 1', 'Museum', 'Line 1', 'BOARDING'),
+  ((SELECT id FROM Schedule WHERE id = 2), '2024-01-01 08:00:00', 'Waterfront', 'Line 1', '2024-01-01 08:00:00', NULL, 'Waterfront', 'Line 1', 'City Hall', 'Line 1', 'BOARDING'),
+  ((SELECT id FROM Schedule WHERE id = 2), '2024-01-01 09:00:00', 'Waterfront', 'Line 1', '2024-01-01 09:00:00', NULL, 'Waterfront', 'Line 1', 'City Hall', 'Line 1', 'BOARDING'),
+  ((SELECT id FROM Schedule WHERE id = 3), '2024-01-01 08:00:00', 'Beach Terminal', 'Line 2', '2024-01-01 08:00:00', NULL, 'Ocean View', 'Line 2', 'Beach Terminal', 'Line 2', 'BOARDING'),
+  ((SELECT id FROM Schedule WHERE id = 3), '2024-01-01 09:00:00', 'Beach Terminal', 'Line 2', '2024-01-01 09:00:00', NULL, 'Ocean View', 'Line 2', 'Beach Terminal', 'Line 2', 'BOARDING'),
+  ((SELECT id FROM Schedule WHERE id = 4), '2024-01-01 08:00:00', 'Airport Express', 'Line 2', '2024-01-01 08:00:00', NULL, 'Airport Express', 'Line 2', 'Business District', 'Line 2', 'BOARDING'),
+  ((SELECT id FROM Schedule WHERE id = 4), '2024-01-01 09:00:00', 'Airport Express', 'Line 2', '2024-01-01 09:00:00', NULL, 'Airport Express', 'Line 2', 'Business District', 'Line 2', 'BOARDING'),
+  ((SELECT id FROM Schedule WHERE id = 5), '2024-01-01 08:00:00', 'Shopping Plaza', 'Line 3', '2024-01-01 08:00:00', NULL, 'Food Court', 'Line 3', 'Shopping Plaza', 'Line 3', 'BOARDING'),
+  ((SELECT id FROM Schedule WHERE id = 5), '2024-01-01 09:00:00', 'Shopping Plaza', 'Line 3', '2024-01-01 09:00:00', NULL, 'Food Court', 'Line 3', 'Shopping Plaza', 'Line 3', 'BOARDING'),
+  ((SELECT id FROM Schedule WHERE id = 6), '2024-01-01 08:00:00', 'North Station', 'Line 3', '2024-01-01 08:00:00', NULL, 'North Station', 'Line 3', 'Science Park', 'Line 3', 'BOARDING'),
+  ((SELECT id FROM Schedule WHERE id = 6), '2024-01-01 09:00:00', 'North Station', 'Line 3', '2024-01-01 09:00:00', NULL, 'North Station', 'Line 3', 'Science Park', 'Line 3', 'BOARDING'),
+  ((SELECT id FROM Schedule WHERE id = 7), '2024-01-01 08:00:00', 'Park & Ride', 'Line 4', '2024-01-01 08:00:00', NULL, 'School District', 'Line 4', 'Park & Ride', 'Line 4', 'BOARDING'),
+  ((SELECT id FROM Schedule WHERE id = 7), '2024-01-01 09:00:00', 'Park & Ride', 'Line 4', '2024-01-01 09:00:00', NULL, 'School District', 'Line 4', 'Park & Ride', 'Line 4', 'BOARDING'),
+  ((SELECT id FROM Schedule WHERE id = 8), '2024-01-01 08:00:00', 'West Terminal', 'Line 4', '2024-01-01 08:00:00', NULL, 'West Terminal', 'Line 4', 'Industrial Park', 'Line 4', 'BOARDING'),
+  ((SELECT id FROM Schedule WHERE id = 8), '2024-01-01 09:00:00', 'West Terminal', 'Line 4', '2024-01-01 09:00:00', NULL, 'West Terminal', 'Line 4', 'Industrial Park', 'Line 4', 'BOARDING');
 
 -- INSERT INTO Ticket (passenger_id, train_id, departure, origin_name, origin_route, dest_name, dest_route, direction) VALUES
 --   (1, 1, )

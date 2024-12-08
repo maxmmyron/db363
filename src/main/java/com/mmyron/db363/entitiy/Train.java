@@ -4,6 +4,11 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.hibernate.annotations.Check;
+
+import org.hibernate.annotations.Checks;
+import org.springframework.validation.annotation.Validated;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -15,6 +20,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,6 +30,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(uniqueConstraints = {
+	@UniqueConstraint(name="uniqueScheduleAndDeparture", columnNames = {"schedule_id", "schedule_departure"})
+})
 public class Train {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

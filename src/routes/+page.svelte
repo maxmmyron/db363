@@ -2,7 +2,7 @@
   import CrudPanel from "$lib/CRUDPanel.svelte";
   import { tick } from "$lib/index";
   import type { PageData } from "./$types";
-  import { time } from "$lib/stores";
+  import { time, DEFAULT_TIME } from "$lib/stores";
 
   let { data }: { data: PageData } = $props();
 
@@ -173,175 +173,156 @@
   >
   <button onclick={() => ($time += 1000 * 60)} class="border">tick</button>
 
+  <button
+    onclick={() => ($time = DEFAULT_TIME)}
+    class="border bg-red-700 color-white font-bold px-1">RESET TIME</button
+  >
+
   {#if ziplines}
     {#each Object.entries(ziplines) as [line, { parts, color }]}
-      <div class="grid grid-rows-3 h-9 grid-flow-col mb-24 w-full">
+      <div class="w-full flex justify-center">
         <div
-          class="col-start-1 row-start-2 rounded-xl w-full z-0"
-          style="background-color: {color}; grid-column-end: {Math.ceil(
-            parts.length / 2
-          ) + 1}"
-        ></div>
-        {#each parts as { part, isTransfer, trains }, i}
-          {#if i % 2 === 0}
-            <div
-              class="row-span-full grid grid-rows-subgrid z-10 place-items-center {i ==
-              parts.length - 1
-                ? 'grid-cols-[12px]'
-                : 'grid-cols-[12px,1fr]'}"
-              style="grid-column-start: {i / 2 + 1};"
-            >
-              <!-- Station: Trains -->
-              <div class="row-start-1">
-                {#each trains as train}
-                  <div class="w-2 h-3 rounded-full bg-green-500">
-                    {train.id}
-                  </div>
-                {/each}
-              </div>
-              <!-- Station styling -->
-              {#if isTransfer}
-                <div
-                  class="w-4 h-4 rounded-full border-2 border-neutral-800 bg-white {i ==
-                  parts.length - 1
-                    ? 'justify-end'
-                    : ''}"
-                ></div>
-              {:else}
-                <div
-                  class="w-2 h-2 rounded-full bg-white {i == parts.length - 1
-                    ? 'justify-end'
-                    : ''}"
-                ></div>
-              {/if}
-              <div class="relative">
-                <p
-                  class="absolute rotate-[50deg] origin-top-left top-1 -left-5 text-nowrap text-neutral-800"
-                >
-                  {(part as App.Station).name}
-                </p>
-              </div>
-
-              <!-- show link -->
-              {#if i !== parts.length - 1}
-                {@const trains = parts[i + 1].trains}
-                <div class="row-start-1 col-start-2">
+          class="grid grid-rows-[24px,12px,24px] mb-24 w-11/12"
+          style="grid-template-columns: repeat({Math.ceil(parts.length / 2) -
+            1}, 1fr);"
+        >
+          <div
+            class="col-start-1 row-start-2 rounded-xl w-full z-0"
+            style="background-color: {color}; grid-column-end: {Math.ceil(
+              parts.length / 2
+            ) + 1}"
+          ></div>
+          {#each parts as { part, isTransfer, trains }, i}
+            {#if i % 2 === 0}
+              <div
+                class="row-span-full z-10 place-items-center {i ==
+                parts.length - 1
+                  ? 'flex justify-end pr-0.5 w-3'
+                  : 'grid grid-rows-subgrid grid-cols-[12px,1fr]'}"
+                style="grid-column-start: {i / 2 + 1};"
+              >
+                <!-- Station: Trains -->
+                <div class="row-start-1 flex gap-1">
                   {#each trains as train}
-                    <div class="w-2 h-3 rounded-full bg-green-500">
-                      {train.id}
+                    <div
+                      class="min-w-[12px] h-5 px-1 rounded-sm bg-neutral-800 shadow-sm flex items-center justify-center"
+                    >
+                      <p class="text-white font-bold">{train.id}</p>
                     </div>
                   {/each}
                 </div>
-              {/if}
-            </div>
-          {/if}
-        {/each}
+                <!-- Station styling -->
+                {#if isTransfer}
+                  <div
+                    class="w-4 h-4 rounded-full border-2 border-neutral-800 bg-white {i ==
+                    parts.length - 1
+                      ? 'justify-end'
+                      : ''}"
+                  ></div>
+                {:else}
+                  <div
+                    class="w-2 h-2 rounded-full bg-white {i == parts.length - 1
+                      ? 'justify-end'
+                      : ''}"
+                  ></div>
+                {/if}
+                <div class="relative">
+                  <p
+                    class="absolute rotate-[50deg] origin-top-left top-1 {i ==
+                    parts.length - 1
+                      ? 'left-2'
+                      : '-left-8'} text-nowrap text-neutral-800"
+                  >
+                    {(part as App.Station).name}
+                  </p>
+                </div>
+
+                <!-- show link -->
+                {#if i !== parts.length - 1}
+                  {@const trains = parts[i + 1].trains}
+                  <div class="row-start-1 col-start-2 flex gap-1">
+                    {#each trains as train}
+                      <div
+                        class="min-w-[12px] h-5 px-1 rounded-sm bg-neutral-800 shadow-sm flex items-center justify-center"
+                      >
+                        <p class="text-white font-bold">{train.id}</p>
+                      </div>
+                    {/each}
+                  </div>
+                {/if}
+              </div>
+            {/if}
+          {/each}
+        </div>
       </div>
     {/each}
   {/if}
-
-  <h1 class="flex-grow">Passengers</h1>
-  <div class="flex gap-2">
-    <CrudPanel
-      requestSent={async () => {
-        let res = await fetch("http://localhost:5133/api/passengers/");
-        d.passengers = await res.json();
-      }}
-      prim={{
-        id: new Map<string, string>([["id", ""]]),
-        first_name: "",
-        last_name: "",
-      }}
-      endpoint="http://localhost:5133/api/passengers"
-    />
-    <aside class="w-1/2 flex-grow">
-      {#each d.passengers as App.Passenger[] as p}
-        <pre style="font-family: monospace;">{JSON.stringify(p)}</pre>
-      {/each}
-    </aside>
-  </div>
 </section>
 
-<section>
-  <h1 class="flex-grow">Trains</h1>
-  <div class="flex gap-2">
-    <CrudPanel
-      requestSent={async () => {
-        let res = await fetch("http://localhost:5133/api/trains/");
-        d.trains = await res.json();
-      }}
-      prim={{
-        id: new Map<string, string>([["id", ""]]),
-        schedule_id: "",
-        schedule_route: "",
-        schedule_departure: "",
-        station_name: "",
-        station_arrival: "",
-        station_departure: "",
-        status: "",
-      }}
-      endpoint="http://localhost:5133/api/trains"
-    />
-    <aside class="w-1/2 flex-grow">
-      {#each d.trains as App.Train[] as t}
-        <pre style="font-family: monospace;">{JSON.stringify(t)}</pre>
-      {/each}
-    </aside>
-  </div>
+<section class="border rounded-sm">
+  <h1 class="text-center">Passengers</h1>
+  <hr />
+  <CrudPanel
+    vals={d.passengers}
+    requestSent={async () => {
+      let res = await fetch("http://localhost:5133/api/passengers/");
+      d.passengers = await res.json();
+    }}
+    ids={["id"]}
+    nonids={["firstName", "lastName"]}
+    endpoint="http://localhost:5133/api/passengers"
+  />
 </section>
 
-<section>
-  <h1 class="flex-grow">Schedules</h1>
-  <div class="flex gap-2">
-    <CrudPanel
-      requestSent={async () => {
-        let res = await fetch("http://localhost:5133/api/schedules/");
-        d.schedules = await res.json();
-      }}
-      prim={{
-        id: new Map<string, string>([["id", ""]]),
-        origin_name: "",
-        origin_route: "",
-        dest_name: "",
-        dest_route: "",
-        direction: "",
-      }}
-      endpoint="http://localhost:5133/api/schedules"
-    />
-    <aside class="w-1/2 flex-grow">
-      {#each d.schedules as App.Schedule[] as s}
-        <pre style="font-family: monospace;">{JSON.stringify(s)}</pre>
-      {/each}
-    </aside>
-  </div>
+<section class="border rounded-sm">
+  <h1 class="text-center">Trains</h1>
+  <hr />
+  <CrudPanel
+    vals={d.trains}
+    requestSent={async () => {
+      let res = await fetch("http://localhost:5133/api/trains/");
+      d.trains = await res.json();
+    }}
+    ids={["id"]}
+    nonids={[
+      "schedule",
+      "station",
+      "link",
+      "schedDep",
+      "stationArrival",
+      "stationDep",
+      "status",
+    ]}
+    endpoint="http://localhost:5133/api/trains"
+  />
 </section>
 
-<section>
-  <h1 class="flex-grow">Tickets</h1>
-  <div class="flex gap-2">
-    <CrudPanel
-      requestSent={async () => {
-        let res = await fetch("http://localhost:5133/api/tickets/");
-        d.tickets = await res.json();
-      }}
-      prim={{
-        id: new Map<string, string>([
-          ["passenger_id", ""],
-          ["train_id", ""],
-        ]),
-        departure: "",
-        origin_name: "",
-        origin_route: "",
-        dest_name: "",
-        dest_route: "",
-        direction: "",
-      }}
-      endpoint="http://localhost:5133/api/tickets"
-    />
-    <aside class="w-1/2 flex-grow">
-      {#each d.tickets as App.Ticket[] as tx}
-        <pre style="font-family: monospace;">{JSON.stringify(tx)}</pre>
-      {/each}
-    </aside>
-  </div>
+<section class="border rounded-sm">
+  <h1 class="text-center">Schedules</h1>
+  <hr />
+  <CrudPanel
+    vals={d.schedules}
+    requestSent={async () => {
+      let res = await fetch("http://localhost:5133/api/schedules/");
+      d.schedules = await res.json();
+    }}
+    ids={["id"]}
+    nonids={["origin", "dest", "direction"]}
+    endpoint="http://localhost:5133/api/schedules"
+  />
+</section>
+
+<section class="border rounded-sm">
+  <h1 class="text-center">Tickets</h1>
+  <hr />
+  <CrudPanel
+    vals={d.tickets}
+    requestSent={async () => {
+      let res = await fetch("http://localhost:5133/api/tickets/");
+      d.tickets = await res.json();
+    }}
+    ids={["passenger", "train"]}
+    nonids={["origin", "dest", "departure", "direction"]}
+    endpoint="http://localhost:5133/api/tickets"
+  />
 </section>

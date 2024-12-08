@@ -1,23 +1,27 @@
-<script
-  lang="ts"
-  generics="T extends {id: Map<string, string>, [k: string]: any}"
->
+<script lang="ts" generics>
   let {
     requestSent,
-    prim,
+    ids,
+    nonids,
     endpoint,
-  }: { requestSent: () => void; prim: T; endpoint: string } = $props();
+    vals,
+  }: {
+    requestSent: () => void;
+    ids: Array<string>;
+    nonids: Array<string>;
+    endpoint: string;
+    vals: any;
+  } = $props();
 
   if (endpoint.at(endpoint.length - 1) == "/") {
     throw new Error("endpoint param cannot end in '/'.");
   }
 
-  const formatIDEndpoint = (id: Partial<T["id"]>) => {
+  const formatIDEndpoint = (id: object) => {
     let e = endpoint;
-    if (id.size === 0) return e;
-
     let entries = Object.entries(id);
-    if (entries.length === 1 && prim.id.size === 1) e += `/${entries[0][1]}`;
+    if (entries.length === 0) return e;
+    if (entries.length === 1 && entries.length === 1) e += `/${entries[0][1]}`;
     else {
       for (const [key, val] of entries) e += `?${key}=${val}&`;
       // cut last '&' off
@@ -27,146 +31,128 @@
     return e;
   };
 
-  let create = async (o: Exclude<T, "id">) => {
+  let create = async (o: object) => {
     let res = await fetch(`${endpoint}/create`, {
       method: "POST",
       body: JSON.stringify(o),
     });
-    let t: T["id"] | Exclude<T, "id"> = await res.json();
+    let t = await res.json();
     console.log(t);
   };
 
-  let read = async (id: Partial<T["id"]>) => {
+  let read = async (id: object) => {
     let res = await fetch(formatIDEndpoint(id), {
       method: "GET",
     });
-    let t: T["id"] | Exclude<T, "id"> = await res.json();
+    let t = await res.json();
     console.log(t);
   };
 
-  let update = async (o: T) => {
+  let update = async (o: object & { id: any }) => {
     let res = await fetch(formatIDEndpoint(o.id), {
       body: JSON.stringify(o),
       method: "PUT",
     });
 
     // remove "id" from o, and send rest as search params
-    let t: T["id"] | Exclude<T, "id"> = await res.json();
+    let t = await res.json();
     console.log(t);
   };
 
-  let del = async (id: T["id"]) => {
+  let del = async (id: object) => {
     let res = await fetch(formatIDEndpoint(id), {
       method: "DELETE",
     });
-    let t: T["id"] | Exclude<T, "id"> = await res.json();
+    let t = await res.json();
     console.log(t);
   };
 </script>
 
-{#snippet idInputs(o: T)}
-  {#each o["id"].entries() as [k, v]}
-    <label for={k}>{k}</label>
-    <input name={k} type="text" class="border" />
+<div
+  class="grid grid-rows-1"
+  style="grid-template-columns: repeat({ids.length +
+    nonids.length}, 1fr) 48px 48px;"
+>
+  {#each ids.concat(nonids) as k}
+    <p>{k}</p>
   {/each}
-{/snippet}
 
-{#snippet nonIdInputs(o: T)}
-  {#each Object.entries(o) as [k, v]}
-    <!-- Skip if ID -->
-    {#if k != "id"}
-      <label for={k}>{k}</label>
-      <input name={k} type="text" class="border" />
-    {/if}
+  <form
+    class="grid row-start-2 col-span-full grid-cols-subgrid"
+    onsubmit={(e) => {
+      e.preventDefault();
+      let formData = new FormData(e.currentTarget);
+
+      let o: { [key: string]: string } = {};
+      formData.forEach((v, k) => {
+        if (k === "id") return;
+        o[k.toString()] = v.toString();
+      });
+
+      create(o).then(() => requestSent());
+    }}
+  >
+    {#each ids as [k, v], i}
+      {#if i === 0}
+        <button
+          type="submit"
+          class="border px-2 py-0.5 w-full bg-black text-white font-bold col-start-1"
+          style="grid-column-end:{ids.length + 1}">+</button
+        >
+      {/if}
+    {/each}
+    {#each Object.entries(nonids) as [k, v]}
+      <!-- Skip if ID -->
+      {#if k != "id"}
+        <input name={k} type="text" class="border w-full" />
+      {/if}
+    {/each}
+  </form>
+
+  <hr class="row-start-3 col-span-full my-3" />
+
+  {#each vals as val, i}
+    <div
+      class="grid col-span-full grid-cols-subgrid"
+      style="grid-row-start: {i + 4};"
+    >
+      <form
+        class="grid col-start-1 -col-end-2 grid-cols-subgrid"
+        onsubmit={(e) => {
+          e.preventDefault();
+          let formData = new FormData(e.currentTarget);
+
+          let o: { [key: string]: string } = {};
+          formData.forEach((v, k) => {
+            if (k === "id") return;
+            o[k.toString()] = v.toString();
+          });
+
+          update(o as any).then(() => requestSent());
+        }}
+      >
+        <!-- We can't guarantee ordering on objects here but not really ez way around that rn -->
+        {#each ids.concat(nonids) as k}
+          <input name={k} value={val[k]} class="border" />
+        {/each}
+        <button
+          type="submit"
+          class="border px-2 py-0.5 w-full bg-black text-white font-bold"
+          >^</button
+        >
+      </form>
+
+      <button
+        class="border px-2 py-0.5 w-full bg-black text-white font-bold"
+        onclick={(e) => {
+          e.preventDefault();
+          let id = new Map<String, string>();
+          ids.forEach((k, _) => id.set(k, val[k]));
+          del(id).then(() => requestSent());
+        }}
+      >
+        x
+      </button>
+    </div>
   {/each}
-{/snippet}
-
-<div class="w-1/2 flex-grow grid border grid-cols-2">
-  <!-- CREATE -->
-  <section class="mb-2 border-b col-span-2 grid grid-cols-subgrid">
-    <h1 class="text-center col-span-2">Create</h1>
-    <form
-      class="grid grid-cols-subgrid col-span-2"
-      onsubmit={(e) => {
-        e.preventDefault();
-        let formData = new FormData(e.currentTarget);
-
-        let o: { [key: string]: string } = {};
-        formData.forEach((v, k) => {
-          if (k === "id") return;
-          o[k.toString()] = v.toString();
-        });
-
-        create(o as Exclude<T, "id">).then(() => requestSent());
-      }}
-    >
-      {@render nonIdInputs(prim)}
-      <button type="submit" class="border px-2 py-0.5 col-start-2"
-        >Submit</button
-      >
-    </form>
-  </section>
-  <section class="mb-2 border-b col-span-2 grid grid-cols-subgrid">
-    <h1 class="text-center col-span-2">Read</h1>
-    <form
-      class="grid grid-cols-subgrid col-span-2"
-      onsubmit={(e) => {
-        e.preventDefault();
-        let formData = new FormData(e.currentTarget);
-
-        let id = new Map<String, string>();
-        formData.forEach((v, k) => id.set(k.toString(), v.toString()));
-
-        read(id as T["id"]).then(() => requestSent());
-      }}
-    >
-      {@render idInputs(prim)}
-      <button type="submit" class="border px-2 py-0.5 col-start-2"
-        >Submit</button
-      >
-    </form>
-  </section>
-  <section class="mb-2 border-b col-span-2 grid grid-cols-subgrid">
-    <h1 class="text-center col-span-2">Update</h1>
-    <form
-      class="grid grid-cols-subgrid col-span-2"
-      onsubmit={(e) => {
-        e.preventDefault();
-        let formData = new FormData(e.currentTarget);
-
-        let o: { [key: string]: string } = {};
-        formData.forEach((v, k) => {
-          if (k === "id") return;
-          o[k.toString()] = v.toString();
-        });
-
-        update(o as T).then(() => requestSent());
-      }}
-    >
-      {@render idInputs(prim)}
-      {@render nonIdInputs(prim)}
-      <button type="submit" class="border px-2 py-0.5 col-start-2"
-        >Submit</button
-      >
-    </form>
-  </section>
-  <section class="mb-2 border-b col-span-2 grid grid-cols-subgrid">
-    <h1 class="text-center col-span-2">Delete</h1>
-    <form
-      class="grid grid-cols-subgrid col-span-2"
-      onsubmit={(e) => {
-        e.preventDefault();
-        let formData = new FormData(e.currentTarget);
-        let id = new Map<String, string>();
-        formData.forEach((v, k) => id.set(k.toString(), v.toString()));
-
-        del(id as T["id"]).then(() => requestSent());
-      }}
-    >
-      {@render idInputs(prim)}
-      <button type="submit" class="border px-2 py-0.5 col-start-2"
-        >Submit</button
-      >
-    </form>
-  </section>
 </div>

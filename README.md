@@ -550,11 +550,12 @@ Occurs during non-standard shutdown of back end. Requires manual kill of process
 # TODO:
 
 - [x] normal form
+- [ ] more rigid proof of NFs
 - [x] functional dependencies
-  - [ ] more rigid proof of FDs
 - [ ] convenient interface to manage passengers and tickets
 - [x] reverse trains when at end of schedule: move to reverse schedule, update direction, and set departure for 10 mins later
 - [x] save time in localstorage when leaving page
 - [x] update API PUT requests to use JSON body format
 - [x] actually use train status
 - [x] fix endpoints mapping in front end
+- [ ] add unique constraints onto entities

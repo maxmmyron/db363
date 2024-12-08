@@ -14,9 +14,6 @@ export const tick = async (timestamp: number) => {
   for(const train of trains) {
     if(train.schedule === null) continue;
 
-    const route = train.schedule.origin.route;
-    let link: App.Link = await (await fetch(`http://localhost:5133/api/links/${route}?origin=${train.link.origin.name}&dest=${train.link.dest.name}`)).json();
-
     // *don't* update train position if:
     // 1. we're at origin station and dt - scheduled departure > 0
     // 2. we're at any other station, and dt - station arrival < station loading time
@@ -33,11 +30,13 @@ export const tick = async (timestamp: number) => {
       }
     } else {
       console.log("in transit...")
-      console.log(`${timestamp} - ${Date.parse(train.stationDep! + "+00:00")} (${timestamp - Date.parse(train.stationDep! + "+00:00")}) <= ${link.duration * 60000}`)
-      if(timestamp - Date.parse(train.stationDep! + "+00:00") < link.duration * 60000) continue;
+      console.log(`${timestamp} - ${Date.parse(train.stationDep! + "+00:00")} (${timestamp - Date.parse(train.stationDep! + "+00:00")}) <= ${train.link.duration * 60000}`)
+      if(timestamp - Date.parse(train.stationDep! + "+00:00") < train.link.duration * 60000) continue;
     }
 
+    console.log(train.id, JSON.stringify(train.link));
     const nt = await moveTrain(train, links, timestamp);
+    console.log(train.id, JSON.stringify(train.link));
     // update train object in DB
     await fetch(`http://localhost:5133/api/trains/${train.id}`, {
       method: "PUT",
@@ -138,16 +137,17 @@ const moveTrain = async (train: App.Train, links: App.Link[], t: number): Promis
   if(train.link === null) throw new Error("Couldn't move train: no link found");
 
   if(train.station === null) {
+    train.station = train.schedule.direction === "INBOUND" ? train.link.origin : train.link.dest;
+    console.log(`${train.id} -> ${train.station.name}`);
+    train.status = "BOARDING";
+
+    if(train.station.name === train.schedule.dest.name) return await reverseTrain(train);
+
+    console.log(`updating link on train ${train.id}...`);
+
     // grab new link.
     // inbound trains move along link from dest to origin; next link is one whose dest === ticket.origin
     // outbound trains move along link from to dest; next link is one whose origin === ticket.origin
-
-    train.station = train.schedule.direction === "INBOUND" ? train.link.origin : train.link.dest;
-    train.status = "BOARDING";
-
-    // if we're at final schedule station, move train
-    if(train.station.name === (train.schedule.direction === "INBOUND" ? train.schedule.origin : train.schedule.dest).name) return await reverseTrain(train, t);
-
     const p = train.schedule.direction === "INBOUND" ? ((l: App.Link) => l.dest.name === train.link.origin.name) : ((l: App.Link) => l.origin.name === train.link.dest.name);
     train.link = links.filter((l) => l.dest.route == train.schedule!.origin.route && l.origin.route === train.schedule!.origin.route).find(p)!;
     train.stationArrival = new Date(t).toISOString();
@@ -167,7 +167,7 @@ const moveTrain = async (train: App.Train, links: App.Link[], t: number): Promis
  *
  * @throws if schedule doesn't have exact reverse
  */
-const reverseTrain = async (train: App.Train, t: number): Promise<App.Train> => {
+const reverseTrain = async (train: App.Train): Promise<App.Train> => {
   if(train.schedule === null) throw new Error("Train is required to have a schedule to reverse");
   if(train.stationArrival === null) throw new Error("Error reversing train schedule: Train has no terminal station arrival time!")
   // find reverse schedule
@@ -177,7 +177,9 @@ const reverseTrain = async (train: App.Train, t: number): Promise<App.Train> => 
   if(rev === undefined) throw new Error("Error reversing train schedule: train's current schedule has no reverse");
 
   train.schedule = rev;
-  train.schedDep = new Date(train.stationArrival + 1000*60*10 + ":00:00").toISOString()
+  // next departure is 15 mins after arrival
+  console.log(Date.parse(train.stationArrival + "+00:00") + 1000 * 60 * 15);
+  train.schedDep = new Date(Date.parse(train.stationArrival + "+00:00") + 1000 * 60 * 15).toISOString()
   train.stationArrival = null;
   train.stationDep = null;
 
