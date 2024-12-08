@@ -2,8 +2,6 @@
   lang="ts"
   generics="T extends {id: Map<string, string>, [k: string]: any}"
 >
-  import { formatAPIObject } from "$lib";
-
   let {
     requestSent,
     prim,
@@ -14,20 +12,32 @@
     throw new Error("endpoint param cannot end in '/'.");
   }
 
+  const formatIDEndpoint = (id: Partial<T["id"]>) => {
+    let e = endpoint;
+    if (id.size === 0) return e;
+
+    let entries = Object.entries(id);
+    if (entries.length === 1 && prim.id.size === 1) e += `/${entries[0][1]}`;
+    else {
+      for (const [key, val] of entries) e += `?${key}=${val}&`;
+      // cut last '&' off
+      e.substring(0, e.length - 1);
+    }
+
+    return e;
+  };
+
   let create = async (o: Exclude<T, "id">) => {
-    let res = await fetch(formatAPIObject(`${endpoint}/create`, o), {
+    let res = await fetch(`${endpoint}/create`, {
       method: "POST",
+      body: JSON.stringify(o),
     });
     let t: T["id"] | Exclude<T, "id"> = await res.json();
     console.log(t);
   };
 
   let read = async (id: Partial<T["id"]>) => {
-    // format endpoint to point to entry (id is partial, so for those tables whose keys are composite, partial keys will point to partial GET endpoints)
-    let e = endpoint;
-    for (const [_, val] of Object.entries(id)) e += `/${val}`;
-
-    let res = await fetch(e, {
+    let res = await fetch(formatIDEndpoint(id), {
       method: "GET",
     });
     let t: T["id"] | Exclude<T, "id"> = await res.json();
@@ -35,30 +45,18 @@
   };
 
   let update = async (o: T) => {
-    // format endpoint to point to individual entry
-    let e = endpoint;
-    for (const [_, val] of Object.entries(o.id)) e += `/${val}`;
+    let res = await fetch(formatIDEndpoint(o.id), {
+      body: JSON.stringify(o),
+      method: "PUT",
+    });
 
     // remove "id" from o, and send rest as search params
-    let res = await fetch(
-      formatAPIObject(
-        e,
-        Object.entries(o).filter(([k, _]) => k != "id")
-      ),
-      {
-        method: "PUT",
-      }
-    );
     let t: T["id"] | Exclude<T, "id"> = await res.json();
     console.log(t);
   };
 
   let del = async (id: T["id"]) => {
-    // format endpoint to point to individual entry
-    let e = endpoint;
-    for (const [_, val] of Object.entries(id)) e += `/${val}`;
-
-    let res = await fetch(e, {
+    let res = await fetch(formatIDEndpoint(id), {
       method: "DELETE",
     });
     let t: T["id"] | Exclude<T, "id"> = await res.json();
