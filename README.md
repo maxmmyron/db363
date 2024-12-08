@@ -83,13 +83,12 @@ _NOTE: Route is described in this table so we can associate a station with multi
 | train_route  | String | PRI | The route assigned to this station (see below) |
 | loading_time | Number |     | How long the train is at the station for       |
 
+**Functional dependencies:**
+
 $$
 R(\text{name}, \text{train\textunderscore route}, \text{loading\textunderscore time})\\\
 (\text{name}, \text{train\textunderscore route}) \rarr (\text{loading\textunderscore time})
 $$
-
-**Functional dependencies:**
-TODO:
 
 **Demonstration of normal form:**
 The table is in 3NF because each non-key column is directly tied to the PK, and there are no transitive dependencies.
@@ -546,16 +545,3 @@ Occurs during non-standard shutdown of back end. Requires manual kill of process
 
 - `netstat -ano | findstr 5133`; note PID of task(s) using port
 - `taskkill /F /PID <pid>`
-
-# TODO:
-
-- [x] normal form
-- [ ] more rigid proof of NFs
-- [x] functional dependencies
-- [ ] convenient interface to manage passengers and tickets
-- [x] reverse trains when at end of schedule: move to reverse schedule, update direction, and set departure for 10 mins later
-- [x] save time in localstorage when leaving page
-- [x] update API PUT requests to use JSON body format
-- [x] actually use train status
-- [x] fix endpoints mapping in front end
-- [ ] add unique constraints onto entities
