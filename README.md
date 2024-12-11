@@ -1,5 +1,7 @@
 # CMPSC 363 Final Project
 
+![proj screenshot](./Screenshot%202024-12-10%20at%2019-08-18%20.png)
+
 ## Stack
 
 - mysql (db)
